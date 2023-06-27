@@ -34,4 +34,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: build
-          remote-dir: /path/to/remote/directory
+          remote-dir: /webble.se/public_html
