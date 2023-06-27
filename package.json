@@ -5,7 +5,7 @@
   "main": "dist/app.js",
   "scripts": {
     "start": "nodemon --quiet --exec ts-node src/app.ts",
-    "build": "tsc"
+    "build": "node -e \"require('fs').mkdirSync('build', { recursive: true })\" && tsc"
   },
   "keywords": [],
   "author": "Dawid Kaleta",
