@@ -19,6 +19,9 @@ async function scrapeMenu() {
     const page = await browser.newPage()
     await page.goto('https://www.compass-group.se/village')
 
+    // Wait for the page navigation to complete
+    await page.waitForNavigation()
+
     // Wait for the menu element to appear
     await page.waitForSelector('.c-article__content')
 
@@ -59,7 +62,7 @@ async function scrapeMenu() {
     return menu
   } catch (error) {
     console.error('Scraping error:', error)
-    throw error // rethrow the error to be caught by the calling function
+    throw error
   }
 }
 
