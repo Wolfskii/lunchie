@@ -14,48 +14,53 @@ app.get('/', async (req: Request, res: Response) => {
 })
 
 async function scrapeMenu() {
-  const browser = await puppeteer.launch({ headless: 'new' })
-  const page = await browser.newPage()
-  await page.goto('https://www.compass-group.se/village')
+  try {
+    const browser = await puppeteer.launch({ headless: 'new' })
+    const page = await browser.newPage()
+    await page.goto('https://www.compass-group.se/village')
 
-  // Wait for the menu element to appear
-  await page.waitForSelector('.c-article__content')
+    // Wait for the menu element to appear
+    await page.waitForSelector('.c-article__content')
 
-  // Extract the menu text
-  const menuText = await page.$eval('.c-article__content', (element) => element.textContent || '')
+    // Extract the menu text
+    const menuText = await page.$eval('.c-article__content', (element) => element.textContent || '')
 
-  // Parse the menu text and extract the daily choices
-  const menuLines = menuText
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line !== '')
+    // Parse the menu text and extract the daily choices
+    const menuLines = menuText
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line !== '')
 
-  const menu: { weekNumber: string; days: { name: string; choices: string[] }[] } = { weekNumber: '', days: [] }
-  let currentDay: { name: string; choices: string[] } | null = null
+    const menu: { weekNumber: string; days: { name: string; choices: string[] }[] } = { weekNumber: '', days: [] }
+    let currentDay: { name: string; choices: string[] } | null = null
 
-  const swedishDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
+    const swedishDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
 
-  for (const line of menuLines) {
-    if (line.startsWith('Lunchmeny vecka')) {
-      menu.weekNumber = line.replace('Lunchmeny vecka', '').trim()
-    } else if (swedishDays.includes(line)) {
-      const dayName = line.trim()
-      currentDay = { name: dayName, choices: [] }
-      menu.days.push(currentDay)
-    } else if (currentDay) {
-      const isClosed = line.toLowerCase().includes('stängt') || line.toLowerCase().includes('stängd')
-      if (isClosed) {
-        currentDay.choices = ['Stängt']
-        currentDay = null // Reset currentDay to prevent further choices from being added
-      } else if (currentDay.choices.length < 3) {
-        currentDay.choices.push(line)
+    for (const line of menuLines) {
+      if (line.startsWith('Lunchmeny vecka')) {
+        menu.weekNumber = line.replace('Lunchmeny vecka', '').trim()
+      } else if (swedishDays.includes(line)) {
+        const dayName = line.trim()
+        currentDay = { name: dayName, choices: [] }
+        menu.days.push(currentDay)
+      } else if (currentDay) {
+        const isClosed = line.toLowerCase().includes('stängt') || line.toLowerCase().includes('stängd')
+        if (isClosed) {
+          currentDay.choices = ['Stängt']
+          currentDay = null // Reset currentDay to prevent further choices from being added
+        } else if (currentDay.choices.length < 3) {
+          currentDay.choices.push(line)
+        }
       }
     }
+
+    await browser.close()
+
+    return menu
+  } catch (error) {
+    console.error('Scraping error:', error)
+    throw error // rethrow the error to be caught by the calling function
   }
-
-  await browser.close()
-
-  return menu
 }
 
 const port = process.env.PORT || 3000
