@@ -10,8 +10,10 @@ const port = process.env.PORT || 3000
 app.get('/', (req: Request, res: Response) => {
   const ip = req.ip
 
+  // Determine the path to package.json based on the environment
+  const packageJsonPath = process.env.NODE_ENV === 'production' ? path.resolve(__dirname, 'package.json') : path.resolve(__dirname, '..', 'package.json')
+
   // Retrieve package.json data
-  const packageJsonPath = path.resolve(__dirname, '..', 'package.json')
   const packageJson = require(packageJsonPath)
 
   const response = {
@@ -21,6 +23,7 @@ app.get('/', (req: Request, res: Response) => {
     version: packageJson.version,
     creator: packageJson.author,
     repository: packageJson.repository.url,
+    environment: process.env.NODE_ENV,
     links: {
       self: { href: '/', method: 'GET', desc: 'Root-URL of the Lunch-Scraper Rest-API' },
       api: { href: '/village', method: 'GET', desc: 'This weeks daily lunch choices from the restaurant Village at CityGate, in Gårda, Gothenburg' }
