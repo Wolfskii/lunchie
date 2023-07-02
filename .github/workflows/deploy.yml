@@ -27,6 +27,10 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: 📂 Remove existing index.html
+        run: |
+          rm -f ./lunch.wolfskii.dev/public_html/index.html
+
       - name: 📂 FTP deployment
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -34,4 +38,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./build/
-          server-dir: ./webble.se/public_html/
+          server-dir: ./lunch.wolfskii.dev/public_html/
