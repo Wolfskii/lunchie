@@ -1,10 +1,37 @@
 import express, { Request, Response } from 'express'
 import axios from 'axios'
 import cheerio from 'cheerio'
+import path from 'path'
 
 const app = express()
+const port = process.env.PORT || 3000
 
-app.get('/', async (req: Request, res: Response) => {
+// Root endpoint
+app.get('/', (req: Request, res: Response) => {
+  const ip = req.ip
+
+  // Retrieve package.json data
+  const packageJsonPath = path.resolve(__dirname, '..', 'package.json')
+  const packageJson = require(packageJsonPath)
+
+  const response = {
+    port,
+    ip,
+    description: packageJson.description,
+    version: packageJson.version,
+    creator: packageJson.author,
+    repository: packageJson.repository.url,
+    links: {
+      self: { href: '/', method: 'GET', desc: 'Root-URL of the Lunch-Scraper Rest-API' },
+      api: { href: '/village', method: 'GET', desc: 'This weeks daily lunch choices from the restaurant Village at CityGate, in Gårda, Gothenburg' }
+    }
+  }
+
+  res.json(response)
+})
+
+// Village endpoint
+app.get('/village', async (req: Request, res: Response) => {
   try {
     const menu = await scrapeMenu()
     res.json(menu)
@@ -53,7 +80,6 @@ async function scrapeMenu() {
   return menu
 }
 
-const port = process.env.PORT || 3000
 app.listen(port, () => {
   console.clear()
   console.log(`Server is running on http://localhost:${port}`)
