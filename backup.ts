@@ -5,7 +5,8 @@ const app = express()
 
 app.get('/', async (req: Request, res: Response) => {
   try {
-    await res.json('Hejsan')
+    const menu = await scrapeMenu()
+    res.json(menu)
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'An error occurred' })
