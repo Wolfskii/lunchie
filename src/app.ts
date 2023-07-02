@@ -2,28 +2,29 @@ import express, { Request, Response } from 'express'
 import axios from 'axios'
 import cheerio from 'cheerio'
 import path from 'path'
-require('dotenv/config')
+require('dotenv').config()
 
 const app = express()
 const port = process.env.PORT || 3000
+!process.env.NODE_ENV ? (process.env.NODE_ENV = 'development') : null
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
   const ip = req.ip
 
-  /*   // Determine the path to package.json based on the environment
+  // Determine the path to package.json based on the environment
   const packageJsonPath = process.env.NODE_ENV === 'production' ? path.resolve(__dirname, 'package.json') : path.resolve(__dirname, '..', 'package.json')
 
   // Retrieve package.json data
-  const packageJson = require(packageJsonPath) */
+  const packageJson = require(packageJsonPath)
 
   const response = {
     port,
     ip,
-    /*     description: packageJson.description,
+    description: packageJson.description,
     version: packageJson.version,
     creator: packageJson.author,
-    repository: packageJson.repository.url, */
+    repository: packageJson.repository.url,
     environment: process.env.NODE_ENV,
     links: {
       self: { href: '/', method: 'GET', desc: 'Root-URL of the Lunch-Scraper Rest-API' },
@@ -31,8 +32,7 @@ app.get('/', (req: Request, res: Response) => {
     }
   }
 
-  // res.json(response)
-  res.json(process.env.NODE_ENV)
+  res.json(response)
 })
 
 // Village endpoint
