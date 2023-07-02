@@ -28,7 +28,7 @@ app.get('/', (req: Request, res: Response) => {
     environment: process.env.NODE_ENV,
     links: {
       self: { href: '/', method: 'GET', desc: 'Root-URL of the Lunch-Scraper Rest-API' },
-      api: { href: '/village', method: 'GET', desc: 'This weeks daily lunch choices from the restaurant Village at CityGate, in Gårda, Gothenburg' }
+      village: { href: '/village', method: 'GET', desc: 'This weeks daily lunch choices from the restaurant Village at CityGate, in Gårda, Gothenburg' }
     }
   }
 
