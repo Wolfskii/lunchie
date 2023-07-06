@@ -35,10 +35,10 @@ function scheduleMenuPosting(client: Client) {
 
 export function postMenuToDiscord(menu: any, client: Client) {
   // Get the Discord channel ID where you want to post the menu
-  const channelId = '<your_channel_id>'
+  const channelId = process.env.DISCORD_CHANNEL_ID
 
   // Find the Discord channel by ID
-  const channel = client.channels.cache.get(channelId) as TextChannel
+  const channel = client.channels.cache.get(channelId!) as TextChannel
 
   // Create the message content
   let message = `Lunch Menu - Week ${menu.weekNumber}\n\n`
