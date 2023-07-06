@@ -1,20 +1,15 @@
 import { Client, TextChannel } from 'discord.js'
-/* import cron from 'node-cron' */
+import cron from 'node-cron'
 import { scrapeMenu } from '../menuScraper'
-
-// Rest of the code...
 
 export function startDiscordBot() {
   const client = new Client({ intents: [] })
 
-  client.once('ready', async () => {
+  client.once('ready', () => {
     console.log('Discord bot is ready')
 
     // Schedule the menu posting task
-    // scheduleMenuPosting(client)
-
-    const menu = await scrapeMenu()
-    postMenuToDiscord(menu, client)
+    scheduleMenuPosting(client)
   })
 
   client.login(process.env.DISCORD_TOKEN)
@@ -22,7 +17,7 @@ export function startDiscordBot() {
   return client
 }
 
-/* function scheduleMenuPosting(client: Client) {
+function scheduleMenuPosting(client: Client) {
   // Schedule the task to run every day at 9 a.m. in Sweden
   cron.schedule(
     '0 9 * * 1-5',
@@ -34,7 +29,7 @@ export function startDiscordBot() {
       timezone: 'Europe/Stockholm'
     }
   )
-} */
+}
 
 export async function postMenuToDiscord(menu: any, client: Client) {
   try {
