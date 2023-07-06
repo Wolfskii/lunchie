@@ -40,7 +40,7 @@ export async function postMenuToDiscord(menu: any, client: Client) {
     const channel = (await client.channels.fetch(channelId!)) as TextChannel
 
     // Create the message content
-    let message = `Lunch Menu - Week ${menu.weekNumber}\n\n`
+    let message = `Lunch-meny - Vecka ${menu.weekNumber}\n\n`
 
     for (const day of menu.days) {
       message += `**${day.name}**\n`
@@ -50,7 +50,7 @@ export async function postMenuToDiscord(menu: any, client: Client) {
           message += `- ${choice}\n`
         }
       } else {
-        message += '- No menu available\n'
+        message += '- Ingen meny tillgänglig\n'
       }
 
       message += '\n'
