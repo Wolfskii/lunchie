@@ -1,5 +1,5 @@
 import { Client, TextChannel } from 'discord.js'
-import cron from 'node-cron'
+/* import cron from 'node-cron' */
 import { scrapeMenu } from '../menuScraper'
 
 // Rest of the code...
@@ -7,11 +7,14 @@ import { scrapeMenu } from '../menuScraper'
 export function startDiscordBot() {
   const client = new Client({ intents: [] })
 
-  client.once('ready', () => {
+  client.once('ready', async () => {
     console.log('Discord bot is ready')
 
     // Schedule the menu posting task
-    scheduleMenuPosting(client)
+    // scheduleMenuPosting(client)
+
+    const menu = await scrapeMenu()
+    postMenuToDiscord(menu, client)
   })
 
   client.login(process.env.DISCORD_TOKEN)
@@ -19,7 +22,7 @@ export function startDiscordBot() {
   return client
 }
 
-function scheduleMenuPosting(client: Client) {
+/* function scheduleMenuPosting(client: Client) {
   // Schedule the task to run every day at 9 a.m. in Sweden
   cron.schedule(
     '0 9 * * 1-5',
@@ -31,32 +34,36 @@ function scheduleMenuPosting(client: Client) {
       timezone: 'Europe/Stockholm'
     }
   )
-}
+} */
 
-export function postMenuToDiscord(menu: any, client: Client) {
-  // Get the Discord channel ID where you want to post the menu
-  const channelId = process.env.DISCORD_CHANNEL_ID
+export async function postMenuToDiscord(menu: any, client: Client) {
+  try {
+    // Get the Discord channel ID where you want to post the menu
+    const channelId = process.env.DISCORD_CHANNEL_ID
 
-  // Find the Discord channel by ID
-  const channel = client.channels.cache.get(channelId!) as TextChannel
+    // Fetch the channel by its ID
+    const channel = (await client.channels.fetch(channelId!)) as TextChannel
 
-  // Create the message content
-  let message = `Lunch Menu - Week ${menu.weekNumber}\n\n`
+    // Create the message content
+    let message = `Lunch Menu - Week ${menu.weekNumber}\n\n`
 
-  for (const day of menu.days) {
-    message += `**${day.name}**\n`
+    for (const day of menu.days) {
+      message += `**${day.name}**\n`
 
-    if (day.choices.length > 0) {
-      for (const choice of day.choices) {
-        message += `- ${choice}\n`
+      if (day.choices.length > 0) {
+        for (const choice of day.choices) {
+          message += `- ${choice}\n`
+        }
+      } else {
+        message += '- No menu available\n'
       }
-    } else {
-      message += '- No menu available\n'
+
+      message += '\n'
     }
 
-    message += '\n'
+    // Send the message to the Discord channel
+    await channel.send(message)
+  } catch (error) {
+    console.error('Error posting menu to Discord:', error)
   }
-
-  // Send the message to the Discord channel
-  channel.send(message)
 }
