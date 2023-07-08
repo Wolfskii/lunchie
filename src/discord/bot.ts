@@ -19,7 +19,48 @@ export function startDiscordBot(): Client {
   return client
 }
 
-export async function postMenuToDiscord() {
+export async function postTodaysMenuToDiscord() {
+  try {
+    if (!client) {
+      console.error('Discord client is not initialized')
+      return
+    }
+
+    // Get the Discord channel ID where you want to post the menu
+    const channelId = process.env.DISCORD_CHANNEL_ID
+
+    // Fetch the channel by its ID
+    const channel = (await client.channels.fetch(channelId!)) as TextChannel
+
+    // Retrieve the menu
+    const menu = await scrapeMenu()
+
+    // Find today's menu
+    const today = new Date().toLocaleDateString('sv-SE', { weekday: 'long' })
+    const todayMenu = menu.days.find((day) => day.name.toLowerCase() === today.toLowerCase())
+
+    // If today's menu is found, post it to Discord
+    if (todayMenu) {
+      let message = `Lunch-meny - ${today}\n\n`
+
+      if (todayMenu.choices.length > 0) {
+        for (const choice of todayMenu.choices) {
+          message += `- ${choice}\n`
+        }
+      } else {
+        message += '- Ingen meny tillgänglig\n'
+      }
+
+      await channel.send(message)
+    } else {
+      console.log(`No menu found for ${today}`)
+    }
+  } catch (error) {
+    console.error('Error posting menu to Discord:', error)
+  }
+}
+
+export async function postWholeWeeksMenuToDiscord() {
   try {
     if (!client) {
       console.error('Discord client is not initialized')
@@ -59,10 +100,10 @@ export async function postMenuToDiscord() {
 function scheduleMenuPosting() {
   // Schedule the task to run every day at 9 a.m. in Sweden
   cron.schedule(
-    '0 9 * * 1-5',
+    '0 8 * * 1-5',
     async () => {
       const menu = await scrapeMenu()
-      postMenuToDiscord()
+      postTodaysMenuToDiscord()
     },
     {
       timezone: 'Europe/Stockholm'

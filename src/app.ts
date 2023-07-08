@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import path from 'path'
-import { startDiscordBot, postMenuToDiscord } from './discord/bot'
+import { startDiscordBot, postTodaysMenuToDiscord, postWholeWeeksMenuToDiscord } from './discord/bot'
 import { scrapeMenu } from './menuScraper'
 require('dotenv').config()
 
@@ -53,7 +53,7 @@ app.get('/village', async (req: Request, res: Response) => {
 // Post to Discord menu endpoint
 app.get('/discord-daily', async (req: Request, res: Response) => {
   try {
-    await postMenuToDiscord()
+    await postTodaysMenuToDiscord()
     res.json({ message: 'Menu posted to Discord' })
   } catch (error) {
     console.error(error)
