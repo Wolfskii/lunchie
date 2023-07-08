@@ -6,8 +6,6 @@ export function startDiscordBot() {
 
   client.once('ready', async () => {
     console.log('Discord bot is ready')
-    await postMenuToDiscord(client) // Post the menu immediately when the bot is ready
-    client.destroy() // Destroy the client after posting the menu
   })
 
   client.login(process.env.DISCORD_TOKEN)
