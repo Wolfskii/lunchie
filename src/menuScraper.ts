@@ -1,6 +1,8 @@
 import axios from 'axios'
 import cheerio from 'cheerio'
 
+const swedishWorkDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
+
 export async function scrapeMenu() {
   const response = await axios.get('https://www.compass-group.se/village')
   const $ = cheerio.load(response.data)
@@ -16,12 +18,10 @@ export async function scrapeMenu() {
       .map((line) => line.trim())
       .filter((line) => line !== '')
 
-    const swedishDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
-
     for (const line of menuLines) {
       if (line.startsWith('Lunchmeny vecka')) {
         menu.weekNumber = line.replace('Lunchmeny vecka', '').trim()
-      } else if (swedishDays.includes(line)) {
+      } else if (swedishWorkDays.includes(line)) {
         const dayName = line.trim()
         currentDay = { name: dayName, choices: [] }
         menu.days.push(currentDay)
