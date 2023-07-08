@@ -8,7 +8,6 @@ export function startDiscordBot(): Client {
 
   client.once('ready', () => {
     console.log('Discord bot is ready')
-    postMenuToDiscord()
   })
 
   client.login(process.env.DISCORD_TOKEN)
