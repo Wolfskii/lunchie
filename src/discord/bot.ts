@@ -1,15 +1,13 @@
 import { Client, TextChannel } from 'discord.js'
-import cron from 'node-cron'
 import { scrapeMenu } from '../menuScraper'
 
 export function startDiscordBot() {
   const client = new Client({ intents: [] })
 
-  client.once('ready', () => {
+  client.once('ready', async () => {
     console.log('Discord bot is ready')
-
-    // Schedule the menu posting task
-    scheduleMenuPosting(client)
+    await postMenuToDiscord(client) // Post the menu immediately when the bot is ready
+    client.destroy() // Destroy the client after posting the menu
   })
 
   client.login(process.env.DISCORD_TOKEN)
@@ -17,21 +15,7 @@ export function startDiscordBot() {
   return client
 }
 
-function scheduleMenuPosting(client: Client) {
-  // Schedule the task to run every day at 9 a.m. in Sweden
-  cron.schedule(
-    '0 9 * * 1-5',
-    async () => {
-      const menu = await scrapeMenu()
-      postMenuToDiscord(menu, client)
-    },
-    {
-      timezone: 'Europe/Stockholm'
-    }
-  )
-}
-
-export async function postMenuToDiscord(menu: any, client: Client) {
+export async function postMenuToDiscord(client: Client) {
   try {
     // Get the Discord channel ID where you want to post the menu
     const channelId = process.env.DISCORD_CHANNEL_ID
@@ -39,7 +23,8 @@ export async function postMenuToDiscord(menu: any, client: Client) {
     // Fetch the channel by its ID
     const channel = (await client.channels.fetch(channelId!)) as TextChannel
 
-    // Create the message content
+    // Retrieve and post the menu
+    const menu = await scrapeMenu()
     let message = `Lunch-meny - Vecka ${menu.weekNumber}\n\n`
 
     for (const day of menu.days) {
@@ -56,7 +41,6 @@ export async function postMenuToDiscord(menu: any, client: Client) {
       message += '\n'
     }
 
-    // Send the message to the Discord channel
     await channel.send(message)
   } catch (error) {
     console.error('Error posting menu to Discord:', error)

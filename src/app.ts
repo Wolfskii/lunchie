@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import path from 'path'
-import { startDiscordBot } from './discord/bot'
+import { startDiscordBot, postMenuToDiscord } from './discord/bot'
 import { scrapeMenu } from './menuScraper'
 require('dotenv').config()
 
@@ -8,7 +8,7 @@ const app = express()
 const port = process.env.PORT || 3000
 !process.env.NODE_ENV ? (process.env.NODE_ENV = 'development') : null
 
-// Start the Discord bot and schedule the menu posting task
+// Start the Discord bot and store the client instance
 const discordClient = startDiscordBot()
 
 // Root endpoint
@@ -31,7 +31,8 @@ app.get('/', (req: Request, res: Response) => {
     environment: process.env.NODE_ENV,
     links: {
       self: { href: '/', method: 'GET', desc: 'Root-URL of the Lunch-Scraper Rest-API' },
-      village: { href: '/village', method: 'GET', desc: 'This weeks daily lunch choices from the restaurant Village at CityGate, in Gårda, Gothenburg' }
+      village: { href: '/village', method: 'GET', desc: 'This weeks daily lunch choices from the restaurant Village at CityGate, in Gårda, Gothenburg' },
+      postMenu: { href: '/post-menu', method: 'GET', desc: 'Manually post the daily menu choices to Discord' } // Add new endpoint
     }
   }
 
@@ -43,6 +44,18 @@ app.get('/village', async (req: Request, res: Response) => {
   try {
     const menu = await scrapeMenu()
     res.json(menu)
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'An error occurred' })
+  }
+})
+
+// Post menu endpoint
+app.get('/discord-daily', async (req: Request, res: Response) => {
+  try {
+    const menu = await scrapeMenu()
+    postMenuToDiscord(discordClient)
+    res.json({ message: 'Menu posted to Discord' })
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'An error occurred' })
