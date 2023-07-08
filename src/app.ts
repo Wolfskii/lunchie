@@ -9,7 +9,7 @@ const port = process.env.PORT || 3000
 !process.env.NODE_ENV ? (process.env.NODE_ENV = 'development') : null
 
 // Start the Discord bot and store the client instance
-const discordClient = startDiscordBot()
+const client = startDiscordBot()
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
@@ -53,7 +53,7 @@ app.get('/village', async (req: Request, res: Response) => {
 // Post to Discord menu endpoint
 app.get('/discord-daily', async (req: Request, res: Response) => {
   try {
-    postMenuToDiscord(discordClient)
+    postMenuToDiscord(client) // Use the client instance returned by startDiscordBot
     res.json({ message: 'Menu posted to Discord' })
   } catch (error) {
     console.error(error)
