@@ -53,7 +53,7 @@ app.get('/village', async (req: Request, res: Response) => {
 // Post to Discord menu endpoint
 app.get('/discord-daily', async (req: Request, res: Response) => {
   try {
-    postMenuToDiscord(client) // Use the client instance returned by startDiscordBot
+    await postMenuToDiscord()
     res.json({ message: 'Menu posted to Discord' })
   } catch (error) {
     console.error(error)

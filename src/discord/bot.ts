@@ -1,10 +1,12 @@
 import { Client, TextChannel } from 'discord.js'
 import { scrapeMenu } from '../menuScraper'
 
-export function startDiscordBot() {
-  const client = new Client({ intents: [] })
+let client: Client | null = null // Store the client instance
 
-  client.once('ready', async () => {
+export function startDiscordBot(): Client {
+  client = new Client({ intents: [] })
+
+  client.once('ready', () => {
     console.log('Discord bot is ready')
   })
 
@@ -13,8 +15,13 @@ export function startDiscordBot() {
   return client
 }
 
-export async function postMenuToDiscord(client: Client) {
+export async function postMenuToDiscord() {
   try {
+    if (!client) {
+      console.error('Discord client is not initialized')
+      return
+    }
+
     // Get the Discord channel ID where you want to post the menu
     const channelId = process.env.DISCORD_CHANNEL_ID
 
