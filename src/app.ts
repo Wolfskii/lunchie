@@ -32,7 +32,7 @@ app.get('/', (req: Request, res: Response) => {
     links: {
       self: { href: '/', method: 'GET', desc: 'Root-URL of the Lunch-Scraper Rest-API' },
       village: { href: '/village', method: 'GET', desc: 'This weeks daily lunch choices from the restaurant Village at CityGate, in Gårda, Gothenburg' },
-      postMenu: { href: '/post-menu', method: 'GET', desc: 'Manually post the daily menu choices to Discord' } // Add new endpoint
+      postMenu: { href: '/discord-daily', method: 'GET', desc: 'Manually post the daily menu choices to Discord' }
     }
   }
 
@@ -50,10 +50,9 @@ app.get('/village', async (req: Request, res: Response) => {
   }
 })
 
-// Post menu endpoint
+// Post to Discord menu endpoint
 app.get('/discord-daily', async (req: Request, res: Response) => {
   try {
-    const menu = await scrapeMenu()
     postMenuToDiscord(discordClient)
     res.json({ message: 'Menu posted to Discord' })
   } catch (error) {
