@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import path from 'path'
-import { startDiscordBot, postTodaysMenuToDiscord, postWholeWeeksMenuToDiscord } from './discord/bot'
+import { startDiscordBot, postTodaysMenuToDiscord, postTomorrowsMenuToDiscord, postWholeWeeksMenuToDiscord } from './discord/bot'
 import { scrapeMenu } from './menuScraper'
 require('dotenv').config()
 
@@ -32,7 +32,8 @@ app.get('/', (req: Request, res: Response) => {
     links: {
       self: { href: '/', method: 'GET', desc: 'Root-URL of the Lunch-Scraper Rest-API' },
       village: { href: '/village', method: 'GET', desc: 'This weeks daily lunch choices from the restaurant Village at CityGate, in Gårda, Gothenburg' },
-      postMenu: { href: '/discord-daily', method: 'GET', desc: 'Manually post the daily menu choices to Discord' }
+      discordToday: { href: '/discord-today', method: 'GET', desc: 'Manually post the daily menu choices to Discord' },
+      discordTomorrow: { href: '/discord-tomorrow', method: 'GET', desc: `Manually post tomorrow's menu choices to Discord` }
     }
   }
 
@@ -50,11 +51,22 @@ app.get('/village', async (req: Request, res: Response) => {
   }
 })
 
-// Post to Discord menu endpoint
-app.get('/discord-daily', async (req: Request, res: Response) => {
+// Post today's menu choices to Discord endpoint
+app.get('/discord-today', async (req: Request, res: Response) => {
   try {
     await postTodaysMenuToDiscord()
-    res.json({ message: 'Menu posted to Discord' })
+    res.json({ message: `Today's menu-choices posted to Discord` })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'An error occurred' })
+  }
+})
+
+// Post tomorrow's menu choices to Discord endpoint
+app.get('/discord-tomorrow', async (req: Request, res: Response) => {
+  try {
+    await postTomorrowsMenuToDiscord()
+    res.json({ message: `Tomorrow's menu-choices posted to Discord` })
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'An error occurred' })

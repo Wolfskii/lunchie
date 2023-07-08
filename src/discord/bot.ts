@@ -61,6 +61,50 @@ export async function postTodaysMenuToDiscord() {
   }
 }
 
+export async function postTomorrowsMenuToDiscord() {
+  try {
+    if (!client) {
+      console.error('Discord client is not initialized')
+      return
+    }
+
+    // Get the Discord channel ID where you want to post the menu
+    const channelId = process.env.DISCORD_CHANNEL_ID
+
+    // Fetch the channel by its ID
+    const channel = (await client.channels.fetch(channelId!)) as TextChannel
+
+    // Retrieve the menu
+    const menu = await scrapeMenu()
+
+    // Find tomorrow's menu
+    const tomorrowDate = new Date()
+    tomorrowDate.setDate(tomorrowDate.getDate() + 1)
+    const tomorrow = tomorrowDate.toLocaleDateString('sv-SE', { weekday: 'long' }).toLowerCase()
+    const tomorrowMenu = menu.days.find((day) => day.name.toLowerCase() === tomorrow)
+
+    // If tomorrow's menu is found, post it to Discord
+    if (tomorrowMenu) {
+      let message = `Lunch-meny - ${tomorrow}\n\n`
+
+      if (tomorrowMenu.choices.length > 0) {
+        for (const choice of tomorrowMenu.choices) {
+          message += `- ${choice}\n`
+        }
+      } else {
+        message += '- Ingen meny tillgänglig\n'
+      }
+
+      await channel.send(message)
+    } else {
+      await channel.send(`Imorgon är det ${tomorrow} och det finns därför ingen meny tillgänglig. Trevlig helg!`)
+      console.log(`No menu found for ${tomorrow}`)
+    }
+  } catch (error) {
+    console.error('Error posting menu to Discord:', error)
+  }
+}
+
 export async function postWholeWeeksMenuToDiscord() {
   try {
     if (!client) {
