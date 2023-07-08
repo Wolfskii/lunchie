@@ -53,6 +53,7 @@ export async function postTodaysMenuToDiscord() {
 
       await channel.send(message)
     } else {
+      await channel.send(`Idag är det ${today} och det finns därför ingen meny tillgänglig. Trevlig helg!`)
       console.log(`No menu found for ${today}`)
     }
   } catch (error) {
