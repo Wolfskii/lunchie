@@ -1,15 +1,19 @@
 import express, { Request, Response } from 'express'
 import path from 'path'
-import { startDiscordBot, postTodaysMenuToDiscord, postTomorrowsMenuToDiscord, postWholeWeeksMenuToDiscord } from './discord/bot'
-import { scrapeMenu } from './menuScraper'
+import { postTodaysMenuToDiscord, postTomorrowsMenuToDiscord } from './discord/utils/menu'
+import { scrapeVillageMenu } from './utils/menuScraper'
+import { Client, GatewayIntentBits } from 'discord.js'
+import { DiscordBot } from './discord/bot'
 require('dotenv').config()
 
 const app = express()
 const port = process.env.PORT || 3000
 !process.env.NODE_ENV ? (process.env.NODE_ENV = 'development') : null
 
-// Start the Discord bot and store the client instance
-const client = startDiscordBot()
+// Start the Discord bot
+const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] })
+const discordBot = new DiscordBot(discordClient, process.env.DISCORD_TOKEN!)
+discordBot.start()
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
@@ -43,7 +47,7 @@ app.get('/', (req: Request, res: Response) => {
 // Village endpoint
 app.get('/village', async (req: Request, res: Response) => {
   try {
-    const menu = await scrapeMenu()
+    const menu = await scrapeVillageMenu()
     res.json(menu)
   } catch (error) {
     console.error(error)
@@ -54,7 +58,7 @@ app.get('/village', async (req: Request, res: Response) => {
 // Post today's menu choices to Discord endpoint
 app.get('/discord-today', async (req: Request, res: Response) => {
   try {
-    await postTodaysMenuToDiscord()
+    await postTodaysMenuToDiscord(discordClient)
     res.json({ message: `Today's menu-choices posted to Discord` })
   } catch (error) {
     console.error(error)
@@ -65,7 +69,7 @@ app.get('/discord-today', async (req: Request, res: Response) => {
 // Post tomorrow's menu choices to Discord endpoint
 app.get('/discord-tomorrow', async (req: Request, res: Response) => {
   try {
-    await postTomorrowsMenuToDiscord()
+    await postTomorrowsMenuToDiscord(discordClient)
     res.json({ message: `Tomorrow's menu-choices posted to Discord` })
   } catch (error) {
     console.error(error)

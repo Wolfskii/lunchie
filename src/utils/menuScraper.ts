@@ -3,7 +3,7 @@ import cheerio from 'cheerio'
 
 const swedishWorkDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
 
-export async function scrapeMenu() {
+export async function scrapeVillageMenu() {
   const response = await axios.get('https://www.compass-group.se/village')
   const $ = cheerio.load(response.data)
 

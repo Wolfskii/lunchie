@@ -1,157 +1,123 @@
-import { Client, TextChannel } from 'discord.js'
-import { scrapeMenu } from '../menuScraper'
+import { Client, Events, TextChannel, CommandInteraction, Collection, Interaction, StringSelectMenuInteraction, GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'discord.js'
+import { scrapeVillageMenu } from '../utils/menuScraper'
 import cron from 'node-cron'
+import { CommandList } from './commands/commandList'
 
-let client: Client | null = null // Store the client instance
+export class DiscordBot {
+  private client: Client
+  private token: string
 
-export function startDiscordBot(): Client {
-  client = new Client({ intents: [] })
+  constructor(client: Client, token: string) {
+    this.client = client
+    this.token = token
+  }
 
-  client.once('ready', () => {
-    console.log('Discord bot is ready')
+  start() {
+    this.client.once(Events.ClientReady, async (bot) => {
+      console.log(`Discord bot ${bot.user.tag} is ready`)
 
-    // Schedule the menu posting task
-    // scheduleMenuPosting() Doesn't seem to work with Asura Hosting (might be wrong)
-  })
+      this.registerCommands()
+    })
 
-  client.login(process.env.DISCORD_TOKEN)
+    this.client.on(Events.InteractionCreate, async (interaction) => {
+      const guildId = interaction.guildId
 
-  return client
-}
+      console.log('Received interaction:', interaction)
+      console.log('Guild ID:', guildId) // Log the guildId
 
-export async function postTodaysMenuToDiscord() {
-  try {
-    if (!client) {
-      console.error('Discord client is not initialized')
-      return
-    }
+      if (!interaction.isChatInputCommand()) return
 
-    // Get the Discord channel ID where you want to post the menu
-    const channelId = process.env.DISCORD_CHANNEL_ID
+      console.log(interaction)
 
-    // Fetch the channel by its ID
-    const channel = (await client.channels.fetch(channelId!)) as TextChannel
+      const command = interaction.client.commands.get(interaction.commandName)
 
-    // Retrieve the menu
-    const menu = await scrapeMenu()
-
-    // Find today's menu
-    const today = new Date().toLocaleDateString('sv-SE', { weekday: 'long' })
-    const todayMenu = menu.days.find((day) => day.name.toLowerCase() === today.toLowerCase())
-
-    // If today's menu is found, post it to Discord
-    if (todayMenu) {
-      let message = `Lunch-meny - ${today}\n\n`
-
-      if (todayMenu.choices.length > 0) {
-        for (const choice of todayMenu.choices) {
-          message += `- ${choice}\n`
-        }
-      } else {
-        message += '- Ingen meny tillgänglig\n'
+      if (!command) {
+        console.error(`No command matching ${interaction.commandName} was found.`)
+        return
       }
 
-      await channel.send(message)
+      try {
+        await command.execute(interaction)
+      } catch (error) {
+        console.error(error)
+        if (interaction.replied || interaction.deferred) {
+          await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true })
+        } else {
+          await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
+        }
+      }
+    })
+
+    this.client.login(this.token)
+  }
+
+  registerCommands() {
+    this.client.commands = new Collection()
+
+    for (const command of CommandList) {
+      this.client.commands.set(command.data.name, command)
+    }
+  }
+
+  interactionCreateListener(interaction: Interaction) {
+    // Checks so that the interaction is a slash-command
+    if (interaction.isChatInputCommand()) {
+      console.log('Received interaction:', interaction)
+
+      /*     const command = interaction.client.commands.get(interaction.commandName)
+
+    if (!command) {
+      console.error(`No command matching ${interaction.commandName} was found.`)
+      return
     } else {
-      await channel.send(`Idag är det ${today} och det finns därför ingen meny tillgänglig. Trevlig helg!`)
-      console.log(`No menu found for ${today}`)
-    }
-  } catch (error) {
-    console.error('Error posting menu to Discord:', error)
-  }
-}
+      console.log('Command:', command)
+    } */
 
-export async function postTomorrowsMenuToDiscord() {
-  try {
-    if (!client) {
-      console.error('Discord client is not initialized')
-      return
-    }
-
-    // Get the Discord channel ID where you want to post the menu
-    const channelId = process.env.DISCORD_CHANNEL_ID
-
-    // Fetch the channel by its ID
-    const channel = (await client.channels.fetch(channelId!)) as TextChannel
-
-    // Retrieve the menu
-    const menu = await scrapeMenu()
-
-    // Find tomorrow's menu
-    const tomorrowDate = new Date()
-    tomorrowDate.setDate(tomorrowDate.getDate() + 1)
-    const tomorrow = tomorrowDate.toLocaleDateString('sv-SE', { weekday: 'long' }).toLowerCase()
-    const tomorrowMenu = menu.days.find((day) => day.name.toLowerCase() === tomorrow)
-
-    // If tomorrow's menu is found, post it to Discord
-    if (tomorrowMenu) {
-      let message = `Lunch-meny - ${tomorrow}\n\n`
-
-      if (tomorrowMenu.choices.length > 0) {
-        for (const choice of tomorrowMenu.choices) {
-          message += `- ${choice}\n`
+      /*       try {
+        // await command.execute(interaction)
+      } catch (error) {
+        console.error(error)
+        if (interaction.replied || interaction.deferred) {
+          await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true })
+        } else {
+          await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true })
         }
-      } else {
-        message += '- Ingen meny tillgänglig\n'
-      }
+      } */
 
-      await channel.send(message)
-    } else {
-      await channel.send(`Imorgon är det ${tomorrow} och det finns därför ingen meny tillgänglig. Trevlig helg!`)
-      console.log(`No menu found for ${tomorrow}`)
-    }
-  } catch (error) {
-    console.error('Error posting menu to Discord:', error)
-  }
-}
-
-export async function postWholeWeeksMenuToDiscord() {
-  try {
-    if (!client) {
-      console.error('Discord client is not initialized')
-      return
-    }
-
-    // Get the Discord channel ID where you want to post the menu
-    const channelId = process.env.DISCORD_CHANNEL_ID
-
-    // Fetch the channel by its ID
-    const channel = (await client.channels.fetch(channelId!)) as TextChannel
-
-    // Retrieve and post the menu
-    const menu = await scrapeMenu()
-    let message = `Lunch-meny - Vecka ${menu.weekNumber}\n\n`
-
-    for (const day of menu.days) {
-      message += `**${day.name}**\n`
-
-      if (day.choices.length > 0) {
-        for (const choice of day.choices) {
-          message += `- ${choice}\n`
+      /*       for (const Command of CommandList) {
+        if (interaction.commandName === Command.data.name) {
+          await Command.execute(interaction)
+          break
         }
-      } else {
-        message += '- Ingen meny tillgänglig\n'
-      }
-
-      message += '\n'
+      } */
     }
-
-    await channel.send(message)
-  } catch (error) {
-    console.error('Error posting menu to Discord:', error)
   }
-}
 
-function scheduleMenuPosting() {
-  // Schedule the task to run every day at 9 a.m. in Sweden
-  cron.schedule(
-    '0 8 * * 1-5',
-    async () => {
-      const menu = await scrapeMenu()
-      postTodaysMenuToDiscord()
-    },
-    {
-      timezone: 'Europe/Stockholm'
-    }
-  )
+  /* async function handleMenuCommand(interaction: CommandInteraction) {
+  const period = interaction.options
+
+  if (period === 'today') {
+    await postTodaysMenuToDiscord()
+  } else if (period === 'tomorrow') {
+    await postTomorrowsMenuToDiscord()
+  } else if (period === 'week') {
+    await postWholeWeeksMenuToDiscord()
+  }
+
+  await interaction.reply('Menu options posted to Discord.')
+} */
+
+  /*   scheduleMenuPosting() {
+    // Schedule the task to run every day at 9 a.m. in Sweden
+    cron.schedule(
+      '0 8 * * 1-5',
+      async () => {
+        const menu = await scrapeMenu()
+        await postTodaysMenuToDiscord()
+      },
+      {
+        timezone: 'Europe/Stockholm'
+      }
+    )
+  } */
 }
