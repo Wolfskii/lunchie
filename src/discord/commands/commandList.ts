@@ -1,4 +1,4 @@
 import { Command } from '../interfaces/Command'
-import { menu } from './menu'
+import { today } from './menu'
 
-export const CommandList: Command[] = [menu]
+export const CommandList: Command[] = [today]

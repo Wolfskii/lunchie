@@ -1,17 +1,20 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { Command } from '../interfaces/Command'
 import { CommandInteraction, CommandInteractionOptionResolver } from 'discord.js'
+import { postTodaysMenuToDiscord } from '../utils/menu'
+import { getTodaysMenu } from '../../utils/menuScraper'
 
-export const menu: Command = {
-  data: new SlashCommandBuilder()
-    .setName('menu')
-    .setDescription('Get the lunch-menu options')
-    .addStringOption((option) => option.setName('period').setDescription('What day or period of menu choices to fetch') /* .setRequired(true).addChoices({ name: 'Today', value: 'today' }, { name: 'Tomorrow', value: 'tomorrow' }, { name: 'Whole week', value: 'week' }) */),
-  execute: async (interaction: CommandInteraction) => {
-    await interaction.reply('Pong!')
+export const today: Command = {
+  data: new SlashCommandBuilder().setName('today').setDescription(`Get today's lunch-menu options`),
+  async execute(interaction: CommandInteraction) {
+    // await postTodaysMenuToDiscord(interaction.client)
     // await interaction.deferReply()
-    const { user } = interaction
-    const text = (interaction.options as CommandInteractionOptionResolver)['getString']('period', true)
-    console.log(text)
+    // await interaction.reply('Halloj') // Response visible for all users in the channel
+
+    getTodaysMenu().then((todaysMenu: string) => {
+      interaction.reply({ content: todaysMenu, ephemeral: true }) // Response only visible to executing user
+    })
+
+    // interaction.editReply('Pong!') // To edit the message afterwards
   }
 }

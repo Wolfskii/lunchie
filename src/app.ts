@@ -9,6 +9,7 @@ require('dotenv').config()
 const app = express()
 const port = process.env.PORT || 3000
 !process.env.NODE_ENV ? (process.env.NODE_ENV = 'development') : null
+console.clear()
 
 // Start the Discord bot
 const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] })

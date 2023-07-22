@@ -3,7 +3,34 @@ import cheerio from 'cheerio'
 
 const swedishWorkDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
 
-export async function scrapeVillageMenu() {
+export async function getTodaysMenu(): Promise<string> {
+  // Retrieve the weekly menu
+  const menu = await scrapeVillageMenu()
+
+  // Find today's menu
+  const today = new Date().toLocaleDateString('sv-SE', { weekday: 'long' })
+  const todayMenu = menu.days.find((day: any) => day.name.toLowerCase() === today.toLowerCase())
+
+  // If today's menu is found, post it to Discord
+  if (todayMenu) {
+    let message = `Lunch-meny - ${today}\n\n`
+
+    if (todayMenu.choices.length > 0) {
+      for (const choice of todayMenu.choices) {
+        message += `- ${choice}\n`
+      }
+    } else {
+      message += '- Ingen meny tillgänglig\n'
+    }
+
+    return message
+  } else {
+    console.log(`No menu found for ${today}`)
+    return `Idag är det ${today} och det finns därför ingen meny tillgänglig. Trevlig helg!`
+  }
+}
+
+export async function scrapeVillageMenu(): Promise<any> {
   const response = await axios.get('https://www.compass-group.se/village')
   const $ = cheerio.load(response.data)
 

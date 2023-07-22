@@ -3,11 +3,6 @@ import { scrapeVillageMenu } from '../../utils/menuScraper'
 
 export async function postTodaysMenuToDiscord(client: Client) {
   try {
-    if (!client) {
-      console.error('Discord client is not initialized')
-      return
-    }
-
     // Get the Discord channel ID where you want to post the menu
     const channelId = process.env.DISCORD_CHANNEL_ID
 
@@ -19,7 +14,7 @@ export async function postTodaysMenuToDiscord(client: Client) {
 
     // Find today's menu
     const today = new Date().toLocaleDateString('sv-SE', { weekday: 'long' })
-    const todayMenu = menu.days.find((day) => day.name.toLowerCase() === today.toLowerCase())
+    const todayMenu = menu.days.find((day: any) => day.name.toLowerCase() === today.toLowerCase())
 
     // If today's menu is found, post it to Discord
     if (todayMenu) {
@@ -63,7 +58,7 @@ export async function postTomorrowsMenuToDiscord(client: Client) {
     const tomorrowDate = new Date()
     tomorrowDate.setDate(tomorrowDate.getDate() + 1)
     const tomorrow = tomorrowDate.toLocaleDateString('sv-SE', { weekday: 'long' }).toLowerCase()
-    const tomorrowMenu = menu.days.find((day) => day.name.toLowerCase() === tomorrow)
+    const tomorrowMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
 
     // If tomorrow's menu is found, post it to Discord
     if (tomorrowMenu) {
