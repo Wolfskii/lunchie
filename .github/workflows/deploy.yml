@@ -31,6 +31,11 @@ jobs:
         run: |
           rm -f ./lunch.wolfskii.dev/public_html/index.html
 
+      - name: Copy bot.js and remove .d.ts files
+        run: |
+          cp ./build/discord/bot.js ./lunch.wolfskii.dev/public_html/discord/bot.js
+          rm -f ./build/discord/bot.d.ts ./build/discord/commands/commandList.d.ts ./build/discord/commands/menu.d.ts ./build/discord/interfaces/Command.d.ts ./build/discord/utils/menu.d.ts ./build/utils/menuScraper.d.ts
+
       - name: 📂 FTP deployment
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
