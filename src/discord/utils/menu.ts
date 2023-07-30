@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { Client, TextChannel } from 'discord.js'
 import { scrapeVillageMenu } from '../../utils/menuScraper'
 
@@ -13,9 +14,8 @@ export async function postTodaysMenuToDiscord(client: Client) {
     const menu = await scrapeVillageMenu()
 
     // Find today's menu
-    const options = { weekday: 'long', locale: 'sv-SE' } as any // Cast options to 'any'
-    const today = new Date().toLocaleDateString('sv-SE', options) // Use the options when converting to date string
-    const todayMenu = menu.days.find((day: any) => day.name.toLowerCase() === today.toLowerCase())
+    const today = moment().locale('sv-SE').format('dddd').toLowerCase()
+    const todayMenu = menu.days.find((day: any) => day.name.toLowerCase() === today)
 
     // If today's menu is found, post it to Discord
     if (todayMenu) {
@@ -56,12 +56,9 @@ export async function postTomorrowsMenuToDiscord(client: Client) {
     const menu = await scrapeVillageMenu()
 
     // Find tomorrow's menu
-    const tomorrowDate = new Date()
-    tomorrowDate.setDate(tomorrowDate.getDate() + 1)
-
-    const options = { weekday: 'long', locale: 'sv-SE' } as any // Cast options to 'any'
-    const tomorrow = tomorrowDate.toLocaleDateString('sv-SE', options) // Use the options when converting to date string
-    const tomorrowMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow.toLowerCase())
+    const tomorrowDate = moment().add(1, 'days')
+    const tomorrow = tomorrowDate.locale('sv-SE').format('dddd').toLowerCase()
+    const tomorrowMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
 
     // If tomorrow's menu is found, post it to Discord
     if (tomorrowMenu) {
