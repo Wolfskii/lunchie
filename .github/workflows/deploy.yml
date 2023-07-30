@@ -27,14 +27,9 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: 📂 Remove existing index.html
-        run: |
-          rm -f ./lunch.wolfskii.dev/public_html/index.html
-
-      - name: Copy bot.js and remove .d.ts files
-        run: |
-          cp ./build/discord/bot.js ./lunch.wolfskii.dev/public_html/discord/bot.js
-          rm -f ./build/discord/bot.d.ts ./build/discord/commands/commandList.d.ts ./build/discord/commands/menu.d.ts ./build/discord/interfaces/Command.d.ts ./build/discord/utils/menu.d.ts ./build/utils/menuScraper.d.ts
+      #- name: 📂 Remove existing index.html
+      #  run: |
+      #    rm -f ./lunch.wolfskii.dev/public_html/index.html
 
       - name: 📂 FTP deployment
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
@@ -42,5 +37,7 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          # port: ${{ secrets.FTP_PORT }} # replace with your web hosts ftp port if needed to set manually
           local-dir: ./build/
           server-dir: ./lunch.wolfskii.dev/public_html/
+          dangerous-clean-slate: true # Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument
