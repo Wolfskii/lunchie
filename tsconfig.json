@@ -17,7 +17,7 @@
     /* Type Checking */
     "strict": true /* Enable all strict type-checking options. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
-    "declaration": true /* Generates corresponding .d.ts files for the compiled JavaScript files. */,
+    "declaration": false /* Generates corresponding .d.ts files for the compiled JavaScript files. */,
     "declarationMap": false /* Do not generate .d.ts.map files, which are source map files for declaration files. */
   },
   "include": ["src"],
