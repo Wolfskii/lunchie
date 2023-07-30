@@ -23,8 +23,7 @@
 
     /* Additional Changes for Custom Type Declarations */
     "resolveJsonModule": true /* Allows importing JSON modules. */,
-    "declaration": true /* Generates corresponding .d.ts files for the compiled JavaScript files. */,
-    "emitDeclarationOnly": true /* Only output .d.ts files and not the compiled JavaScript files. */
+    "declaration": true /* Generates corresponding .d.ts files for the compiled JavaScript files. */
   },
   "include": ["src"],
   "exclude": ["node_modules"],
