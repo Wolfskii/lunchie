@@ -36,4 +36,3 @@ jobs:
           # port: ${{ secrets.FTP_PORT }} # replace with your web hosts ftp port if needed to set manually
           local-dir: ./build/
           server-dir: ./lunch.wolfskii.dev/public_html/
-          dangerous-clean-slate: true # Deletes all contents of server-dir, even items in excluded with 'exclude' argument
