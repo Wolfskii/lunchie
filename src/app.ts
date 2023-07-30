@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express'
 import path from 'path'
-import { postTodaysMenuToDiscord, postTomorrowsMenuToDiscord } from './discord/utils/menu'
+import { postTodaysMenuToDiscord, postTomorrowsMenuToDiscord, postWeeklyMenuToDiscord } from './discord/utils/menu'
 import { scrapeVillageMenu } from './utils/menuScraper'
 import { Client, GatewayIntentBits } from 'discord.js'
 import { DiscordBot } from './discord/bot'
@@ -72,6 +72,17 @@ app.get('/discord-tomorrow', async (req: Request, res: Response) => {
   try {
     await postTomorrowsMenuToDiscord(discordClient)
     res.json({ message: `Tomorrow's menu-choices posted to Discord` })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ error: 'An error occurred' })
+  }
+})
+
+// Post this week's menu choices to Discord endpoint
+app.get('/discord-week', async (req: Request, res: Response) => {
+  try {
+    await postWeeklyMenuToDiscord(discordClient)
+    res.json({ message: `This week's menu-choices posted to Discord` })
   } catch (error) {
     console.error(error)
     res.status(500).json({ error: 'An error occurred' })
