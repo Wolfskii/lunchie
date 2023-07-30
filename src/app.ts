@@ -38,7 +38,8 @@ app.get('/', (req: Request, res: Response) => {
       self: { href: '/', method: 'GET', desc: 'Root-URL of the Lunch-Scraper Rest-API' },
       village: { href: '/village', method: 'GET', desc: 'This weeks daily lunch choices from the restaurant Village at CityGate, in Gårda, Gothenburg' },
       discordToday: { href: '/discord-today', method: 'GET', desc: 'Manually post the daily menu choices to Discord' },
-      discordTomorrow: { href: '/discord-tomorrow', method: 'GET', desc: `Manually post tomorrow's menu choices to Discord` }
+      discordTomorrow: { href: '/discord-tomorrow', method: 'GET', desc: `Manually post tomorrow's menu choices to Discord` },
+      discordWeek: { href: '/discord-week', method: 'GET', desc: `Manually post this week's menu choices to Discord` }
     }
   }
 
