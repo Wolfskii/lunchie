@@ -13,8 +13,8 @@ console.clear()
 
 // Start the Discord bot
 const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] })
-const discordBot = new DiscordBot(discordClient, process.env.DISCORD_TOKEN!)
-discordBot.start()
+// const discordBot = new DiscordBot(discordClient, process.env.DISCORD_TOKEN!)
+// discordBot.start()
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
@@ -56,7 +56,7 @@ app.get('/village', async (req: Request, res: Response) => {
   }
 })
 
-// Post today's menu choices to Discord endpoint
+/* // Post today's menu choices to Discord endpoint
 app.get('/discord-today', async (req: Request, res: Response) => {
   try {
     await postTodaysMenuToDiscord(discordClient)
@@ -76,7 +76,7 @@ app.get('/discord-tomorrow', async (req: Request, res: Response) => {
     console.error(error)
     res.status(500).json({ error: 'An error occurred' })
   }
-})
+}) */
 
 app.listen(port, () => {
   console.clear()
