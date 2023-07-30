@@ -24,6 +24,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: 📂 Create build directory
+        run: mkdir -p ./build
+
       - name: Build
         run: npm run build
 
