@@ -77,18 +77,18 @@ export class DiscordBot {
       this.client.commands.set(command.data.name, command)
     }
   }
-}
 
-/*   scheduleMenuPosting() {
+  scheduleMenuPosting() {
     // Schedule the task to run every day at 9 a.m. in Sweden
     cron.schedule(
       '0 8 * * 1-5',
       async () => {
-        const menu = await scrapeMenu()
-        await postTodaysMenuToDiscord()
+        // const menu = await scrapeMenu()
+        // await postTodaysMenuToDiscord()
       },
       {
         timezone: 'Europe/Stockholm'
       }
     )
-  } */
+  }
+}
