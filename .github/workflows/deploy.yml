@@ -27,10 +27,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      #- name: 📂 Remove existing index.html
-      #  run: |
-      #    rm -f ./lunch.wolfskii.dev/public_html/index.html
-
       - name: 📂 FTP deployment
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
@@ -41,3 +37,7 @@ jobs:
           local-dir: ./build/
           server-dir: ./lunch.wolfskii.dev/public_html/
           dangerous-clean-slate: true # Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument
+
+      - name: 📂 Remove deploymen json
+        run: |
+          rm -f ./lunch.wolfskii.dev/public_html/.ftp-deploy-sync-state.json
