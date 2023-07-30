@@ -39,4 +39,5 @@ jobs:
           dangerous-clean-slate: true # Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument
 
       - name: 📂 Remove deployment json
-        run: rm -f ./lunch.wolfskii.dev/public_html/.ftp-deploy-sync-state.json
+        run: |
+          lftp -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }} -e "rm /lunch.wolfskii.dev/public_html/.ftp-deploy-sync-state.json; exit"
