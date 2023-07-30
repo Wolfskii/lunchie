@@ -38,6 +38,5 @@ jobs:
           server-dir: ./lunch.wolfskii.dev/public_html/
           dangerous-clean-slate: true # Deletes ALL contents of server-dir, even items in excluded with 'exclude' argument
 
-      - name: 📂 Remove deploymen json
-        run: |
-          rm -f ./lunch.wolfskii.dev/public_html/.ftp-deploy-sync-state.json
+      - name: 📂 Remove deployment json
+        run: rm -f ./lunch.wolfskii.dev/public_html/.ftp-deploy-sync-state.json
