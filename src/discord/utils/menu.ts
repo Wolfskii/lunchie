@@ -13,7 +13,8 @@ export async function postTodaysMenuToDiscord(client: Client) {
     const menu = await scrapeVillageMenu()
 
     // Find today's menu
-    const today = new Date().toLocaleDateString('sv-SE', { weekday: 'long' })
+    const options = { weekday: 'long', locale: 'sv-SE' } as any // Cast options to 'any'
+    const today = new Date().toLocaleDateString('sv-SE', options) // Use the options when converting to date string
     const todayMenu = menu.days.find((day: any) => day.name.toLowerCase() === today.toLowerCase())
 
     // If today's menu is found, post it to Discord
@@ -57,8 +58,10 @@ export async function postTomorrowsMenuToDiscord(client: Client) {
     // Find tomorrow's menu
     const tomorrowDate = new Date()
     tomorrowDate.setDate(tomorrowDate.getDate() + 1)
-    const tomorrow = tomorrowDate.toLocaleDateString('sv-SE', { weekday: 'long' }).toLowerCase()
-    const tomorrowMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
+
+    const options = { weekday: 'long', locale: 'sv-SE' } as any // Cast options to 'any'
+    const tomorrow = tomorrowDate.toLocaleDateString('sv-SE', options) // Use the options when converting to date string
+    const tomorrowMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow.toLowerCase())
 
     // If tomorrow's menu is found, post it to Discord
     if (tomorrowMenu) {

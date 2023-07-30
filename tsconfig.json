@@ -17,9 +17,17 @@
     /* Type Checking */
     "strict": true /* Enable all strict type-checking options. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
+
+    /* Custom Type Declarations */
+    "typeRoots": ["src/@types", "node_modules/@types"] /* Specify the directories where custom type declarations are located. */,
+
+    /* Additional Changes for Custom Type Declarations */
+    "resolveJsonModule": true /* Allows importing JSON modules. */,
     "declaration": false /* Generates corresponding .d.ts files for the compiled JavaScript files. */,
-    "declarationMap": false /* Do not generate .d.ts.map files, which are source map files for declaration files. */
+    "declarationMap": false /* Do not generate .d.ts.map files, which are source map files for declaration files. */,
+    "emitDeclarationOnly": false /* Only output .d.ts files and not the compiled JavaScript files. */
   },
   "include": ["src"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "files": ["src/@types/discord.d.ts"] /* Add this line to reference the custom type declaration file */
 }
