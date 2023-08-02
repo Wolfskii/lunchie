@@ -17,17 +17,6 @@ discordBot.start()
 import routes from './routes/index'
 app.use('/', routes(discordClient))
 
-// Village endpoint
-app.get('/village', async (req: Request, res: Response) => {
-  try {
-    const menu = await scrapeVillageMenu()
-    res.json(menu)
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ error: 'An error occurred' })
-  }
-})
-
 app.listen(port, () => {
   console.clear()
   console.log(`Server is running on http://localhost:${port}`)
