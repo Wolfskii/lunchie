@@ -29,10 +29,10 @@ export const controller = {
   /**
    * Function for getting today's menu
    */
-  getTodaysMenuToDiscord: async (req: Request, res: Response) => {
+  getTodaysMenu: async (req: Request, res: Response) => {
     try {
-      await getTodaysMenu()
-      res.status(200).json({ message: `Today's menu-choices posted to Discord` })
+      const menu = await getTodaysMenu()
+      res.status(200).json(menu)
     } catch (error) {
       console.error(error)
       res.status(500).json({ error: 'An error occurred' })
@@ -42,10 +42,10 @@ export const controller = {
   /**
    * Function for getting tomorrow's menu
    */
-  getTomorrowsMenuToDiscord: async (req: Request, res: Response) => {
+  getTomorrowsMenu: async (req: Request, res: Response) => {
     try {
-      await getTomorrowsMenu()
-      res.status(200).json({ message: `Tomorrow's menu-choices posted to Discord` })
+      const menu = await getTomorrowsMenu()
+      res.status(200).json(menu)
     } catch (error) {
       console.error(error)
       res.status(500).json({ error: 'An error occurred' })
@@ -55,10 +55,10 @@ export const controller = {
   /**
    * Function for getting this week's menu
    */
-  getWeeklyMenuToDiscord: async (req: Request, res: Response) => {
+  getWeeklyMenu: async (req: Request, res: Response) => {
     try {
-      await getWeeklyMenu()
-      res.status(200).json({ message: `This week's menu-choices posted to Discord` })
+      const menu = await getWeeklyMenu()
+      res.status(200).json(menu)
     } catch (error) {
       console.error(error)
       res.status(500).json({ error: 'An error occurred' })
