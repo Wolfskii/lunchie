@@ -4,20 +4,35 @@ import cheerio from 'cheerio'
 
 const swedishWorkDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
 
-export async function getTodaysMenu(): Promise<string> {
+export async function getTodaysMenu(): Promise<any> {
+  // Retrieve the weekly menu
+  const menu = await scrapeVillageMenu()
+
+  // Find today's menu and add week-number and day in the object
+  const today = moment().locale('sv-SE').format('dddd').toLowerCase()
+  const todaysMenu = menu.days.find((day: any) => day.name.toLowerCase() === today)
+
+  todaysMenu.weekNumber = menu.weekNumber
+  todaysMenu.day = today.charAt(0).toUpperCase() + today.slice(1)
+  delete todaysMenu.name
+
+  return todaysMenu
+}
+
+export async function getTodaysMenuString(): Promise<string> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
 
   // Find today's menu
   const today = moment().locale('sv-SE').format('dddd').toLowerCase()
-  const todayMenu = menu.days.find((day: any) => day.name.toLowerCase() === today)
+  const todaysMenu = menu.days.find((day: any) => day.name.toLowerCase() === today)
 
-  // If today's menu is found, post it to Discord
-  if (todayMenu) {
+  // If today's menu is found
+  if (todaysMenu) {
     let message = `Lunch-meny - ${today}\n\n`
 
-    if (todayMenu.choices.length > 0) {
-      for (const choice of todayMenu.choices) {
+    if (todaysMenu.choices.length > 0) {
+      for (const choice of todaysMenu.choices) {
         message += `- ${choice}\n`
       }
     } else {
@@ -31,21 +46,37 @@ export async function getTodaysMenu(): Promise<string> {
   }
 }
 
-export async function getTomorrowsMenu(): Promise<string> {
+export async function getTomorrowsMenu(): Promise<any> {
+  // Retrieve the weekly menu
+  const menu = await scrapeVillageMenu()
+
+  // Find tomorrow's menu and add week-number and day in the object
+  const tomorrowDate = moment().add(1, 'days')
+  const tomorrow = tomorrowDate.locale('sv-SE').format('dddd').toLowerCase()
+  const tomorrowsMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
+
+  tomorrowsMenu.weekNumber = menu.weekNumber
+  tomorrowsMenu.day = tomorrow.charAt(0).toUpperCase() + tomorrow.slice(1)
+  delete tomorrowsMenu.name
+
+  return tomorrowsMenu
+}
+
+export async function getTomorrowsMenuString(): Promise<string> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
 
   // Find tomorrow's menu
   const tomorrowDate = moment().add(1, 'days')
   const tomorrow = tomorrowDate.locale('sv-SE').format('dddd').toLowerCase()
-  const tomorrowMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
+  const tomorrowsMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
 
-  // If tomorrow's menu is found, post it to Discord
-  if (tomorrowMenu) {
+  // If tomorrow's menu is found
+  if (tomorrowsMenu) {
     let message = `Lunch-meny - ${tomorrow}\n\n`
 
-    if (tomorrowMenu.choices.length > 0) {
-      for (const choice of tomorrowMenu.choices) {
+    if (tomorrowsMenu.choices.length > 0) {
+      for (const choice of tomorrowsMenu.choices) {
         message += `- ${choice}\n`
       }
     } else {
@@ -59,7 +90,14 @@ export async function getTomorrowsMenu(): Promise<string> {
   }
 }
 
-export async function getWeeklyMenu(): Promise<string> {
+export async function getWeeklyMenu(): Promise<any> {
+  // Retrieve the weekly menu
+  const menu = await scrapeVillageMenu()
+
+  return menu
+}
+
+export async function getWeeklyMenuString(): Promise<string> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
 

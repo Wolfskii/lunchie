@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { Command } from '../interfaces/Command'
 import { CommandInteraction } from 'discord.js'
-import { getTodaysMenu, getTomorrowsMenu, getWeeklyMenu } from '../../utils/menuScraper'
+import { getTodaysMenuString, getTomorrowsMenuString, getWeeklyMenuString } from '../../utils/menuScraper'
 
 // ENGLISH COMMANDS:
 export const today: Command = {
@@ -9,7 +9,7 @@ export const today: Command = {
   async execute(interaction: CommandInteraction) {
     // await interaction.deferReply()
 
-    getTodaysMenu().then((todaysMenu: string) => {
+    getTodaysMenuString().then((todaysMenu: string) => {
       interaction.reply({ content: todaysMenu, ephemeral: true }) // Response only visible to executing user
     })
 
@@ -24,7 +24,7 @@ export const today: Command = {
 export const tomorrow: Command = {
   data: new SlashCommandBuilder().setName('tomorrow').setDescription(`Get tomorrow's lunch-menu options`),
   async execute(interaction: CommandInteraction) {
-    getTomorrowsMenu().then((tomorrowsMenu: string) => {
+    getTomorrowsMenuString().then((tomorrowsMenu: string) => {
       interaction.reply({ content: tomorrowsMenu, ephemeral: true }) // Response only visible to executing user
     })
   }
@@ -33,7 +33,7 @@ export const tomorrow: Command = {
 export const week: Command = {
   data: new SlashCommandBuilder().setName('week').setDescription(`Get this weeks lunch-menu options`),
   async execute(interaction: CommandInteraction) {
-    getWeeklyMenu().then((tomorrowsMenu: string) => {
+    getWeeklyMenuString().then((tomorrowsMenu: string) => {
       interaction.reply({ content: tomorrowsMenu, ephemeral: true }) // Response only visible to executing user
     })
   }
@@ -43,7 +43,7 @@ export const week: Command = {
 export const idag: Command = {
   data: new SlashCommandBuilder().setName('idag').setDescription(`Visa dagens lunch-val`),
   async execute(interaction: CommandInteraction) {
-    getTodaysMenu().then((todaysMenu: string) => {
+    getTodaysMenuString().then((todaysMenu: string) => {
       interaction.reply({ content: todaysMenu, ephemeral: true }) // Response only visible to executing user
     })
   }
@@ -52,7 +52,7 @@ export const idag: Command = {
 export const imorgon: Command = {
   data: new SlashCommandBuilder().setName('imorgon').setDescription(`Visa morgondagens lunch-val`),
   async execute(interaction: CommandInteraction) {
-    getTomorrowsMenu().then((tomorrowsMenu: string) => {
+    getTomorrowsMenuString().then((tomorrowsMenu: string) => {
       interaction.reply({ content: tomorrowsMenu, ephemeral: true }) // Response only visible to executing user
     })
   }
@@ -61,7 +61,7 @@ export const imorgon: Command = {
 export const vecka: Command = {
   data: new SlashCommandBuilder().setName('vecka').setDescription(`Visa hela veckans lunch-val`),
   async execute(interaction: CommandInteraction) {
-    getWeeklyMenu().then((tomorrowsMenu: string) => {
+    getWeeklyMenuString().then((tomorrowsMenu: string) => {
       interaction.reply({ content: tomorrowsMenu, ephemeral: true }) // Response only visible to executing user
     })
   }
