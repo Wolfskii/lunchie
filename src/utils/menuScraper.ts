@@ -55,6 +55,7 @@ export async function getTomorrowsMenu(): Promise<any> {
   const tomorrow = tomorrowDate.locale('sv-SE').format('dddd').toLowerCase()
   const tomorrowsMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
 
+  tomorrowsMenu.weekNumber = menu.weekNumber
   tomorrowsMenu.day = tomorrow.charAt(0).toUpperCase() + tomorrow.slice(1)
   delete tomorrowsMenu.name
 
