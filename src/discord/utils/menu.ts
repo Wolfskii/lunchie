@@ -1,6 +1,6 @@
 import moment from 'moment'
 import { Client, TextChannel } from 'discord.js'
-import { getTodaysMenu, getTomorrowsMenu, getWeeklyMenu, scrapeVillageMenu } from '../../utils/menuScraper'
+import { getTodaysMenu, getTomorrowsMenu, getWeeklyMenu } from '../../utils/menuScraper'
 
 export async function postTodaysMenuToDiscord(client: Client) {
   try {
