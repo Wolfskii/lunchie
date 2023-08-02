@@ -14,10 +14,10 @@ export const controller = {
       const response = {
         description: 'Main index endpoint the for Discord-bot',
         links: {
-          self: { href: '/', method: 'GET', desc: 'Main index endpoint for the Discord-bot of the REST-API' },
-          today: { href: '/today', method: 'GET', desc: `Post today's menu choices to Discord endpoint` },
-          tomorrow: { href: '/today', method: 'GET', desc: `Post tomorrow's menu choices to Discord` },
-          week: { href: '/today', method: 'GET', desc: `Post this week's menu choices to Discord endpoint` }
+          self: { href: '/discord', method: 'GET', desc: 'Main index endpoint for the Discord-bot of the REST-API' },
+          today: { href: '/discord/today', method: 'GET', desc: `Post today's menu choices to Discord endpoint` },
+          tomorrow: { href: '/discord/tomorrow', method: 'GET', desc: `Post tomorrow's menu choices to Discord` },
+          week: { href: '/discord/week', method: 'GET', desc: `Post this week's menu choices to Discord endpoint` }
         }
       }
 

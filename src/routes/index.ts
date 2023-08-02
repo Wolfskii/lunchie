@@ -10,7 +10,7 @@ const router = express.Router()
 
 export default (discordClient: Client) => {
   router.get('/', controller.getIndex)
-  router.use('/village', village)
+  router.use('/village', village())
   router.use('/discord', discord(discordClient))
 
   return router
