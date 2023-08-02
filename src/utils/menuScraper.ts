@@ -13,7 +13,8 @@ export async function getTodaysMenu(): Promise<any> {
   const todaysMenu = menu.days.find((day: any) => day.name.toLowerCase() === today)
 
   todaysMenu.weekNumber = menu.weekNumber
-  todaysMenu.day = today
+  todaysMenu.day = today.charAt(0).toUpperCase() + today.slice(1)
+  delete todaysMenu.name
 
   return todaysMenu
 }
@@ -54,8 +55,8 @@ export async function getTomorrowsMenu(): Promise<any> {
   const tomorrow = tomorrowDate.locale('sv-SE').format('dddd').toLowerCase()
   const tomorrowsMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
 
-  tomorrowsMenu.weekNumber = menu.weekNumber
-  tomorrowsMenu.day = tomorrow
+  tomorrowsMenu.day = tomorrow.charAt(0).toUpperCase() + tomorrow.slice(1)
+  delete tomorrowsMenu.name
 
   return tomorrowsMenu
 }
