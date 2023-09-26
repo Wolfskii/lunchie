@@ -9,8 +9,13 @@ const app = express()
 const port = process.env.PORT || 3000
 !process.env.NODE_ENV ? (process.env.NODE_ENV = 'development') : null
 
-// Use the cors middleware
-app.use(cors())
+// Use the cors middleware and configure it
+app.use(
+  cors({
+    origin: '*', // Allow all origins
+    methods: 'GET' // Allow GET requests
+  })
+)
 
 // Start the Discord bot
 const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] })
