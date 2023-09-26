@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express'
 import { scrapeVillageMenu } from './utils/menuScraper'
 import { Client, GatewayIntentBits } from 'discord.js'
-import { cors } from 'cors'
+import cors from 'cors'
 import { DiscordBot } from './discord/bot'
 require('dotenv').config()
 
@@ -10,10 +10,12 @@ const port = process.env.PORT || 3000
 !process.env.NODE_ENV ? (process.env.NODE_ENV = 'development') : null
 
 // Use the cors middleware and configure it
-app.use(cors({
-  origin: 'http://localhost:5173', // Replace with your Svelte app's URL
-  methods: 'GET', // Allow GET requests
-}));
+app.use(
+  cors({
+    origin: '*', // Allow all origins
+    methods: 'GET' // Allow GET requests
+  })
+)
 
 // Start the Discord bot
 const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] })
