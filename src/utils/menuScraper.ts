@@ -126,6 +126,8 @@ export async function getWeeklyVillageMenuString(): Promise<string> {
 }
 
 export async function scrapeVillageMenu(): Promise<any> {
+  await scrapeVallagat()
+
   const response = await axios.get('https://www.compass-group.se/village')
   const $ = cheerio.load(response.data)
 
@@ -169,8 +171,29 @@ export async function scrapeVallagat(): Promise<any> {
   const menu: { weekNumber: string; days: { name: string; choices: string[] }[] } = { weekNumber: '', days: [] }
   let currentDay: { name: string; choices: string[] } | null = null
 
-   $('h1').each((index: any, element: any) => {
+  // Extract week number
+  menu.weekNumber = $('h1.font_0.wixui-rich-text__text').text().replace('Serveras mellan 10:45 - 13:30', '').replace('Vecka', '').replace('Lunchmeny', '').trim()
 
-    console.log(element)
-   })
+  $('.font_7.wixui-rich-text__text').each((index: any, element: any) => {
+    const menuText = $(element).text().trim()
+
+    if (menuText === 'KÖTT:' || menuText === 'FISK:' || menuText === 'VEG:' || menuText === 'STREET FOOD:') {
+      // This line represents the category, skip it.
+      return
+    }
+
+    if (swedishWorkDays.includes(menuText)) {
+      // This line represents the day of the week.
+      currentDay = { name: menuText, choices: [] }
+      menu.days.push(currentDay)
+    } else if (currentDay) {
+      // This line represents a menu choice.
+      currentDay.choices.push(menuText)
+    }
+  })
+
+  console.log(menu)
+
+  return menu
 }
+
