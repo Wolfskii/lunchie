@@ -4,6 +4,54 @@ import cheerio from 'cheerio'
 
 const swedishWorkDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
 
+export async function getTodaysCollectedMenuString(): Promise<string> {
+  let message = '__**Lunch-meny**__\n\n'
+
+  // Retrieve the weekly menus
+  const villageMenu = await scrapeVillageMenu()
+  const vallagatMenu = await scrapeVallagatMenu()
+
+  // Find today's menu at the Village
+  let today = moment().locale('sv-SE').format('dddd').toLowerCase()
+  let todaysMenu = villageMenu.days.find((day: any) => day.name.toLowerCase() === today)
+
+  // If today's menu is found
+  if (todaysMenu) {
+    message += `'**The Village** - *${today}:*\n\n`
+
+    if (todaysMenu.choices.length > 0) {
+      for (const choice of todaysMenu.choices) {
+        message += `- ${choice}\n`
+      }
+    } else {
+      message += '- Ingen meny tillgänglig\n'
+    }
+  } else {
+    message += `'**The Village** - Idag är det ${today} och det finns därför ingen meny tillgänglig. Trevlig helg!`
+  }
+
+  // Find today's menu at Vällagat
+  today = moment().locale('sv-SE').format('dddd').toLowerCase()
+  todaysMenu = vallagatMenu.days.find((day: any) => day.name.toLowerCase() === today)
+
+  // If today's menu is found
+  if (todaysMenu) {
+    message += `'**Vällagat** - *${today}:*\n\n`
+
+    if (todaysMenu.choices.length > 0) {
+      for (const choice of todaysMenu.choices) {
+        message += `- ${choice}\n`
+      }
+    } else {
+      message += '- Ingen meny tillgänglig\n'
+    }
+  } else {
+    message += `'**Vällagat** - Idag är det ${today} och det finns därför ingen meny tillgänglig. Trevlig helg!`
+  }
+
+  return message
+}
+
 export async function getTodaysVillageMenu(): Promise<any> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
