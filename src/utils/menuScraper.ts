@@ -1,6 +1,7 @@
 import moment from 'moment'
 import axios from 'axios'
 import cheerio from 'cheerio'
+import { select, filter, is, some } from 'cheerio-select'
 
 const swedishWorkDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
 
@@ -174,26 +175,37 @@ export async function scrapeVallagat(): Promise<any> {
   // Extract week number
   menu.weekNumber = $('h1.font_0.wixui-rich-text__text').text().replace('Serveras mellan 10:45 - 13:30', '').replace('Vecka', '').replace('Lunchmeny', '').trim()
 
-  $('.font_7.wixui-rich-text__text').each((index: any, element: any) => {
-    const menuText = $(element).text().trim()
+  // Target the relevant sections for each workday (sections 2 to 6)
+  $('main > section')
+    .slice(1, 6)
+    .each((index: any, element: any) => {
+      const dayName = swedishWorkDays[index]
 
-    if (menuText === 'KÖTT:' || menuText === 'FISK:' || menuText === 'VEG:' || menuText === 'STREET FOOD:') {
-      // This line represents the category, skip it.
-      return
-    }
+      if (dayName) {
+        // This line represents the day of the week.
+        currentDay = { name: dayName, choices: [] }
+        menu.days.push(currentDay)
+      }
 
-    if (swedishWorkDays.includes(menuText)) {
-      // This line represents the day of the week.
-      currentDay = { name: menuText, choices: [] }
-      menu.days.push(currentDay)
-    } else if (currentDay) {
-      // This line represents a menu choice.
-      currentDay.choices.push(menuText)
-    }
-  })
+      // Navigate through nested divs to reach menu choices
+      const dayContent = $(element).find('div').find('div').find('div')
 
-  console.log(menu)
+      const menuChoices: any[] = []
+      dayContent.each((index, choiceElement) => {
+        const choiceText = $(choiceElement).text().trim()
+
+        if (choiceText !== 'KÖTT:' && choiceText !== 'FISK:' && choiceText !== 'VEG:' && choiceText !== 'STREET FOOD:' && choiceText !== currentDay?.name.toUpperCase()) {
+          menuChoices.push(choiceText)
+        }
+      })
+
+      if (currentDay) {
+        currentDay.choices.push(...menuChoices)
+      }
+    })
 
   return menu
 }
+
+
 
