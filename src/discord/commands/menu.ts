@@ -1,7 +1,7 @@
 import { SlashCommandBuilder } from '@discordjs/builders'
 import { Command } from '../interfaces/Command'
-import { CommandInteraction } from 'discord.js'
-import { getTodaysVillageMenuString, getTomorrowsVillageMenuString, getWeeklyVillageMenuString } from '../../utils/menuScraper'
+import { CommandInteraction, TextChannel } from 'discord.js'
+import { getTodaysCollectedMenuString, getTomorrowsCollectedMenuString, getWeeklyCollectedMenuStrings } from '../../utils/menuScraper'
 
 // ENGLISH COMMANDS:
 export const today: Command = {
@@ -9,7 +9,7 @@ export const today: Command = {
   async execute(interaction: CommandInteraction) {
     // await interaction.deferReply()
 
-    getTodaysVillageMenuString().then((todaysMenu: string) => {
+    getTodaysCollectedMenuString().then((todaysMenu: string) => {
       interaction.reply({ content: todaysMenu, ephemeral: true }) // Response only visible to executing user
     })
 
@@ -24,18 +24,28 @@ export const today: Command = {
 export const tomorrow: Command = {
   data: new SlashCommandBuilder().setName('tomorrow').setDescription(`Get tomorrow's lunch-menu options`),
   async execute(interaction: CommandInteraction) {
-    getTomorrowsVillageMenuString().then((tomorrowsMenu: string) => {
+    getTomorrowsCollectedMenuString().then((tomorrowsMenu: string) => {
       interaction.reply({ content: tomorrowsMenu, ephemeral: true }) // Response only visible to executing user
     })
   }
 }
 
 export const week: Command = {
-  data: new SlashCommandBuilder().setName('week').setDescription(`Get this weeks lunch-menu options`),
+  data: new SlashCommandBuilder().setName('week').setDescription(`Get this week's lunch-menu options`),
   async execute(interaction: CommandInteraction) {
-    getWeeklyVillageMenuString().then((tomorrowsMenu: string) => {
-      interaction.reply({ content: tomorrowsMenu, ephemeral: true }) // Response only visible to executing user
-    })
+    const weeksMenuStrings = await getWeeklyCollectedMenuStrings()
+
+    for (let i = 0; i < weeksMenuStrings.length; i++) {
+      const menuString = weeksMenuStrings[i]
+
+      if (i === 0) {
+        // Use .reply for the first menuString
+        await interaction.reply({ content: menuString, ephemeral: true })
+      } else {
+        // Use .followUp for the rest of the menuStrings
+        await interaction.followUp({ content: menuString, ephemeral: true })
+      }
+    }
   }
 }
 
@@ -43,7 +53,7 @@ export const week: Command = {
 export const idag: Command = {
   data: new SlashCommandBuilder().setName('idag').setDescription(`Visa dagens lunch-val`),
   async execute(interaction: CommandInteraction) {
-    getTodaysVillageMenuString().then((todaysMenu: string) => {
+    getTodaysCollectedMenuString().then((todaysMenu: string) => {
       interaction.reply({ content: todaysMenu, ephemeral: true }) // Response only visible to executing user
     })
   }
@@ -52,7 +62,7 @@ export const idag: Command = {
 export const imorgon: Command = {
   data: new SlashCommandBuilder().setName('imorgon').setDescription(`Visa morgondagens lunch-val`),
   async execute(interaction: CommandInteraction) {
-    getTomorrowsVillageMenuString().then((tomorrowsMenu: string) => {
+    getTomorrowsCollectedMenuString().then((tomorrowsMenu: string) => {
       interaction.reply({ content: tomorrowsMenu, ephemeral: true }) // Response only visible to executing user
     })
   }
@@ -61,8 +71,18 @@ export const imorgon: Command = {
 export const vecka: Command = {
   data: new SlashCommandBuilder().setName('vecka').setDescription(`Visa hela veckans lunch-val`),
   async execute(interaction: CommandInteraction) {
-    getWeeklyVillageMenuString().then((tomorrowsMenu: string) => {
-      interaction.reply({ content: tomorrowsMenu, ephemeral: true }) // Response only visible to executing user
-    })
+    const weeksMenuStrings = await getWeeklyCollectedMenuStrings()
+
+    for (let i = 0; i < weeksMenuStrings.length; i++) {
+      const menuString = weeksMenuStrings[i]
+
+      if (i === 0) {
+        // Use .reply for the first menuString
+        await interaction.reply({ content: menuString, ephemeral: true })
+      } else {
+        // Use .followUp for the rest of the menuStrings
+        await interaction.followUp({ content: menuString, ephemeral: true })
+      }
+    }
   }
 }
