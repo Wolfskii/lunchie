@@ -41,7 +41,6 @@ export async function getTodaysVillageMenuString(): Promise<string> {
 
     return message
   } else {
-    console.log(`No menu found for ${today}`)
     return `Idag är det ${today} och det finns därför ingen meny tillgänglig. Trevlig helg!`
   }
 }
@@ -55,9 +54,13 @@ export async function getTomorrowsVillageMenu(): Promise<any> {
   const tomorrow = tomorrowDate.locale('sv-SE').format('dddd').toLowerCase()
   const tomorrowsMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
 
-  tomorrowsMenu.weekNumber = menu.weekNumber
-  tomorrowsMenu.day = tomorrow.charAt(0).toUpperCase() + tomorrow.slice(1)
-  delete tomorrowsMenu.name
+  if (tomorrowsMenu) {
+    tomorrowsMenu.weekNumber = menu.weekNumber
+    tomorrowsMenu.day = tomorrow.charAt(0).toUpperCase() + tomorrow.slice(1)
+    delete tomorrowsMenu.name
+  } else {
+    return `Imorgon är det ${tomorrow} och det finns därför ingen meny tillgänglig. Trevlig helg!`
+  }
 
   return tomorrowsMenu
 }
@@ -199,7 +202,6 @@ export async function getTodaysVallagatMenuString(): Promise<string> {
 
     return message
   } else {
-    console.log(`No menu found for ${today}`)
     return `Idag är det ${today} och det finns därför ingen meny tillgänglig. Trevlig helg!`
   }
 }
@@ -213,9 +215,13 @@ export async function getTomorrowsVallagatMenu(): Promise<any> {
   const tomorrow = tomorrowDate.locale('sv-SE').format('dddd').toLowerCase()
   const tomorrowsMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
 
-  tomorrowsMenu.weekNumber = menu.weekNumber
-  tomorrowsMenu.day = tomorrow.charAt(0).toUpperCase() + tomorrow.slice(1)
-  delete tomorrowsMenu.name
+  if (tomorrowsMenu) {
+    tomorrowsMenu.weekNumber = menu.weekNumber
+    tomorrowsMenu.day = tomorrow.charAt(0).toUpperCase() + tomorrow.slice(1)
+    delete tomorrowsMenu.name
+  } else {
+    return `Imorgon är det ${tomorrow} och det finns därför ingen meny tillgänglig. Trevlig helg!`
+  }
 
   return tomorrowsMenu
 }
@@ -312,7 +318,7 @@ export async function scrapeVallagatMenu(): Promise<any> {
       dayContent.each((index, choiceElement) => {
         const choiceText = $(choiceElement).text().trim()
 
-        if (choiceText !== 'KÖTT:' && choiceText !== 'FISK:' && choiceText !== 'VEG:' && choiceText !== 'STREET FOOD:' && choiceText !== currentDay?.name.toUpperCase()) {
+        if (choiceText !== 'KÖTT:' && choiceText !== 'FISK:' && choiceText !== 'VEG:' && choiceText !== 'STREET FOOD:' && choiceText !== 'KÖTT / VEG:' && choiceText.includes('|') && choiceText !== currentDay?.name.toUpperCase()) {
           menuChoices.push(choiceText)
         }
       })
