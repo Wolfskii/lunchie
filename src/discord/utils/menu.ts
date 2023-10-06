@@ -1,5 +1,5 @@
 import { Client, TextChannel } from 'discord.js'
-import { getTodaysVillageMenuString, getTomorrowsVillageMenuString, getWeeklyVillageMenuString } from '../../utils/menuScraper'
+import { getTodaysCollectedMenuString, getTomorrowsVillageMenuString, getWeeklyVillageMenuString } from '../../utils/menuScraper'
 
 export async function postTodaysMenuToDiscord(client: Client) {
   try {
@@ -14,7 +14,7 @@ export async function postTodaysMenuToDiscord(client: Client) {
     const channel = (await client.channels.fetch(channelId!)) as TextChannel
 
     // Retrieve the menu
-    const menu = await getTodaysVillageMenuString()
+    const menu = await getTodaysCollectedMenuString()
 
     // Post it to Discord
     await channel.send(menu)
