@@ -1,7 +1,6 @@
 import moment from 'moment'
 import axios from 'axios'
 import cheerio from 'cheerio'
-import { select, filter, is, some } from 'cheerio-select'
 
 const swedishWorkDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
 
@@ -127,8 +126,6 @@ export async function getWeeklyVillageMenuString(): Promise<string> {
 }
 
 export async function scrapeVillageMenu(): Promise<any> {
-  await scrapeVallagat()
-
   const response = await axios.get('https://www.compass-group.se/village')
   const $ = cheerio.load(response.data)
 
@@ -165,7 +162,128 @@ export async function scrapeVillageMenu(): Promise<any> {
   return menu
 }
 
-export async function scrapeVallagat(): Promise<any> {
+export async function getTodaysVallagatMenu(): Promise<any> {
+  // Retrieve the weekly menu
+  const menu = await scrapeVallagatMenu()
+
+  // Find today's menu and add week-number and day in the object
+  const today = moment().locale('sv-SE').format('dddd').toLowerCase()
+  const todaysMenu = menu.days.find((day: any) => day.name.toLowerCase() === today)
+
+  todaysMenu.weekNumber = menu.weekNumber
+  todaysMenu.day = today.charAt(0).toUpperCase() + today.slice(1)
+  delete todaysMenu.name
+
+  return todaysMenu
+}
+
+export async function getTodaysVallagatMenuString(): Promise<string> {
+  // Retrieve the weekly menu
+  const menu = await scrapeVallagatMenu()
+
+  // Find today's menu
+  const today = moment().locale('sv-SE').format('dddd').toLowerCase()
+  const todaysMenu = menu.days.find((day: any) => day.name.toLowerCase() === today)
+
+  // If today's menu is found
+  if (todaysMenu) {
+    let message = `Lunch-meny - ${today}\n\n`
+
+    if (todaysMenu.choices.length > 0) {
+      for (const choice of todaysMenu.choices) {
+        message += `- ${choice}\n`
+      }
+    } else {
+      message += '- Ingen meny tillgänglig\n'
+    }
+
+    return message
+  } else {
+    console.log(`No menu found for ${today}`)
+    return `Idag är det ${today} och det finns därför ingen meny tillgänglig. Trevlig helg!`
+  }
+}
+
+export async function getTomorrowsVallagatMenu(): Promise<any> {
+  // Retrieve the weekly menu
+  const menu = await scrapeVallagatMenu()
+
+  // Find tomorrow's menu and add week-number and day in the object
+  const tomorrowDate = moment().add(1, 'days')
+  const tomorrow = tomorrowDate.locale('sv-SE').format('dddd').toLowerCase()
+  const tomorrowsMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
+
+  tomorrowsMenu.weekNumber = menu.weekNumber
+  tomorrowsMenu.day = tomorrow.charAt(0).toUpperCase() + tomorrow.slice(1)
+  delete tomorrowsMenu.name
+
+  return tomorrowsMenu
+}
+
+export async function getTomorrowsVallagatMenuString(): Promise<string> {
+  // Retrieve the weekly menu
+  const menu = await scrapeVallagatMenu()
+
+  // Find tomorrow's menu
+  const tomorrowDate = moment().add(1, 'days')
+  const tomorrow = tomorrowDate.locale('sv-SE').format('dddd').toLowerCase()
+  const tomorrowsMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
+
+  // If tomorrow's menu is found
+  if (tomorrowsMenu) {
+    let message = `Lunch-meny - ${tomorrow}\n\n`
+
+    if (tomorrowsMenu.choices.length > 0) {
+      for (const choice of tomorrowsMenu.choices) {
+        message += `- ${choice}\n`
+      }
+    } else {
+      message += '- Ingen meny tillgänglig\n'
+    }
+
+    return message
+  } else {
+    console.log(`No menu found for ${tomorrow}`)
+    return `Imorgon är det ${tomorrow} och det finns därför ingen meny tillgänglig. Trevlig helg!`
+  }
+}
+
+export async function getWeeklyVallagatMenu(): Promise<any> {
+  // Retrieve the weekly menu
+  const menu = await scrapeVallagatMenu()
+
+  return menu
+}
+
+export async function getWeeklyVallagatMenuString(): Promise<string> {
+  // Retrieve the weekly menu
+  const menu = await scrapeVallagatMenu()
+
+  // Start by adding week and number as heading
+  let message = `__**Vecka ${menu.weekNumber}:**__\n\n`
+
+  // Add each day of the week
+  menu.days.forEach((day: any) => {
+    message += `*${day.name}:*\n`
+
+    if (day.choices.length > 0) {
+      // Add each daily choice to the current day
+      day.choices.forEach((choice: any) => {
+        message += `${choice}\n`
+      })
+    } else {
+      // If no choice for the current day is found, print a '-'
+      message += '-'
+    }
+
+    // New row to separate from last choice of previous day before new day is printed
+    message += '\n'
+  })
+
+  return message
+}
+
+export async function scrapeVallagatMenu(): Promise<any> {
   const response = await axios.get('https://www.vallagat.se/lunchmeny')
   const $ = cheerio.load(response.data)
 

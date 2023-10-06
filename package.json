@@ -30,7 +30,6 @@
     "@discordjs/rest": "^1.7.1",
     "axios": "^1.4.0",
     "cheerio": "^1.0.0-rc.12",
-    "cheerio-select": "^2.1.0",
     "cors": "^2.8.5",
     "discord-api-types": "^0.37.47",
     "discord.js": "^14.11.0",
