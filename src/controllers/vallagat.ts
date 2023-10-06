@@ -1,22 +1,22 @@
 import { Request, Response } from 'express'
-import { getTodaysVillageMenu, getTomorrowsVillageMenu, getWeeklyVillageMenu } from '../utils/menuScraper'
+import { getTodaysVallagatMenu, getTomorrowsVallagatMenu, getWeeklyVallagatMenu } from '../utils/menuScraper'
 
 /**
- * Controller contains the controller functions for the Village menu options
+ * Controller contains the controller functions for the Vällagat menu options
  */
 export const controller = {
   /**
-   * Function for getting the Village-endpoint's index
+   * Function for getting the Vällagat-endpoint's index
    */
   getIndex: async (req: Request, res: Response) => {
     try {
       const response = {
-        description: 'Main endpoint for the restaurant Village at CityGate, in Gothenburg',
+        description: 'Main endpoint for the restaurant Vällagat in Gårda, Gothenburg',
         links: {
-          self: { href: '/village', method: 'GET', desc: `Main endpoint for the restaurant Village's menu options` },
-          today: { href: '/village/today', method: 'GET', desc: `Get today's menu choices` },
-          tomorrow: { href: '/village/tomorrow', method: 'GET', desc: `Get tomorrow's menu choices` },
-          week: { href: '/village/week', method: 'GET', desc: `Get this week's menu choices` }
+          self: { href: '/vallagat', method: 'GET', desc: `Main endpoint for the restaurant Vällagat's menu options` },
+          today: { href: '/vallagat/today', method: 'GET', desc: `Get today's menu choices` },
+          tomorrow: { href: '/vallagat/tomorrow', method: 'GET', desc: `Get tomorrow's menu choices` },
+          week: { href: '/vallagat/week', method: 'GET', desc: `Get this week's menu choices` }
         }
       }
 
@@ -31,7 +31,7 @@ export const controller = {
    */
   getTodaysMenu: async (req: Request, res: Response) => {
     try {
-      const menu = await getTodaysVillageMenu()
+      const menu = await getTodaysVallagatMenu()
       res.status(200).json(menu)
     } catch (error) {
       console.error(error)
@@ -44,7 +44,7 @@ export const controller = {
    */
   getTomorrowsMenu: async (req: Request, res: Response) => {
     try {
-      const menu = await getTomorrowsVillageMenu()
+      const menu = await getTomorrowsVallagatMenu()
       res.status(200).json(menu)
     } catch (error) {
       console.error(error)
@@ -57,7 +57,7 @@ export const controller = {
    */
   getWeeklyMenu: async (req: Request, res: Response) => {
     try {
-      const menu = await getWeeklyVillageMenu()
+      const menu = await getWeeklyVallagatMenu()
       res.status(200).json(menu)
     } catch (error) {
       console.error(error)

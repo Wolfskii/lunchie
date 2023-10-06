@@ -30,6 +30,7 @@ export const controller = {
         links: {
           self: { href: '/', method: 'GET', desc: 'Root-URL of the Lunch-Scraper Rest-API' },
           village: { href: '/village', method: 'GET', desc: 'Main endpoint for the restaurant Village at CityGate, in Gothenburg' },
+          vallagat: { href: '/vallagat', method: 'GET', desc: 'Main endpoint for the restaurant Vällagat in Gårda, Gothenburg' },
           discord: { href: '/discord', method: 'GET', desc: 'Main endpoint for all manual Discord-bot actions' }
         }
       }
