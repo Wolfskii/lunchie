@@ -4,7 +4,7 @@ import cheerio from 'cheerio'
 
 const swedishWorkDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
 
-export async function getTodaysMenu(): Promise<any> {
+export async function getTodaysVillageMenu(): Promise<any> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
 
@@ -19,7 +19,7 @@ export async function getTodaysMenu(): Promise<any> {
   return todaysMenu
 }
 
-export async function getTodaysMenuString(): Promise<string> {
+export async function getTodaysVillageMenuString(): Promise<string> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
 
@@ -46,7 +46,7 @@ export async function getTodaysMenuString(): Promise<string> {
   }
 }
 
-export async function getTomorrowsMenu(): Promise<any> {
+export async function getTomorrowsVillageMenu(): Promise<any> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
 
@@ -62,7 +62,7 @@ export async function getTomorrowsMenu(): Promise<any> {
   return tomorrowsMenu
 }
 
-export async function getTomorrowsMenuString(): Promise<string> {
+export async function getTomorrowsVillageMenuString(): Promise<string> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
 
@@ -90,14 +90,14 @@ export async function getTomorrowsMenuString(): Promise<string> {
   }
 }
 
-export async function getWeeklyMenu(): Promise<any> {
+export async function getWeeklyVillageMenu(): Promise<any> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
 
   return menu
 }
 
-export async function getWeeklyMenuString(): Promise<string> {
+export async function getWeeklyVillageMenuString(): Promise<string> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
 
@@ -160,4 +160,17 @@ export async function scrapeVillageMenu(): Promise<any> {
   })
 
   return menu
+}
+
+export async function scrapeVallagat(): Promise<any> {
+  const response = await axios.get('https://www.vallagat.se/lunchmeny')
+  const $ = cheerio.load(response.data)
+
+  const menu: { weekNumber: string; days: { name: string; choices: string[] }[] } = { weekNumber: '', days: [] }
+  let currentDay: { name: string; choices: string[] } | null = null
+
+   $('h1').each((index: any, element: any) => {
+
+    console.log(element)
+   })
 }

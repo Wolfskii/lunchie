@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { getTodaysMenu, getTomorrowsMenu, getWeeklyMenu } from '../utils/menuScraper'
+import { getTodaysVillageMenu, getTomorrowsVillageMenu, getWeeklyVillageMenu } from '../utils/menuScraper'
 
 /**
  * Controller contains the controller functions for the Village menu options
@@ -31,7 +31,7 @@ export const controller = {
    */
   getTodaysMenu: async (req: Request, res: Response) => {
     try {
-      const menu = await getTodaysMenu()
+      const menu = await getTodaysVillageMenu()
       res.status(200).json(menu)
     } catch (error) {
       console.error(error)
@@ -44,7 +44,7 @@ export const controller = {
    */
   getTomorrowsMenu: async (req: Request, res: Response) => {
     try {
-      const menu = await getTomorrowsMenu()
+      const menu = await getTomorrowsVillageMenu()
       res.status(200).json(menu)
     } catch (error) {
       console.error(error)
@@ -57,7 +57,7 @@ export const controller = {
    */
   getWeeklyMenu: async (req: Request, res: Response) => {
     try {
-      const menu = await getWeeklyMenu()
+      const menu = await getWeeklyVillageMenu()
       res.status(200).json(menu)
     } catch (error) {
       console.error(error)

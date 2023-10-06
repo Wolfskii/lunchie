@@ -1,6 +1,5 @@
-import moment from 'moment'
 import { Client, TextChannel } from 'discord.js'
-import { getTodaysMenuString, getTomorrowsMenuString, getWeeklyMenuString } from '../../utils/menuScraper'
+import { getTodaysVillageMenuString, getTomorrowsVillageMenuString, getWeeklyVillageMenuString } from '../../utils/menuScraper'
 
 export async function postTodaysMenuToDiscord(client: Client) {
   try {
@@ -15,7 +14,7 @@ export async function postTodaysMenuToDiscord(client: Client) {
     const channel = (await client.channels.fetch(channelId!)) as TextChannel
 
     // Retrieve the menu
-    const menu = await getTodaysMenuString()
+    const menu = await getTodaysVillageMenuString()
 
     // Post it to Discord
     await channel.send(menu)
@@ -38,7 +37,7 @@ export async function postTomorrowsMenuToDiscord(client: Client) {
     const channel = (await client.channels.fetch(channelId!)) as TextChannel
 
     // Retrieve the menu
-    const menu = await getTomorrowsMenuString()
+    const menu = await getTomorrowsVillageMenuString()
 
     // Post it to Discord
     await channel.send(menu)
@@ -61,7 +60,7 @@ export async function postWeeklyMenuToDiscord(client: Client) {
     const channel = (await client.channels.fetch(channelId!)) as TextChannel
 
     // Retrieve the menu
-    const menu = await getWeeklyMenuString()
+    const menu = await getWeeklyVillageMenuString()
 
     // Post it to Discord
     await channel.send(menu)
