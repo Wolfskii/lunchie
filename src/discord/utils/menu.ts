@@ -1,5 +1,5 @@
 import { Client, TextChannel } from 'discord.js'
-import { getTodaysVillageMenuString, getTomorrowsVillageMenuString, getWeeklyVillageMenuString } from '../../utils/menuScraper'
+import { getTodaysCollectedMenuString, getTomorrowsCollectedMenuString, getWeeklyCollectedMenuStrings } from '../../utils/menuScraper'
 
 export async function postTodaysMenuToDiscord(client: Client) {
   try {
@@ -14,7 +14,7 @@ export async function postTodaysMenuToDiscord(client: Client) {
     const channel = (await client.channels.fetch(channelId!)) as TextChannel
 
     // Retrieve the menu
-    const menu = await getTodaysVillageMenuString()
+    const menu = await getTodaysCollectedMenuString()
 
     // Post it to Discord
     await channel.send(menu)
@@ -37,7 +37,7 @@ export async function postTomorrowsMenuToDiscord(client: Client) {
     const channel = (await client.channels.fetch(channelId!)) as TextChannel
 
     // Retrieve the menu
-    const menu = await getTomorrowsVillageMenuString()
+    const menu = await getTomorrowsCollectedMenuString()
 
     // Post it to Discord
     await channel.send(menu)
@@ -60,11 +60,14 @@ export async function postWeeklyMenuToDiscord(client: Client) {
     const channel = (await client.channels.fetch(channelId!)) as TextChannel
 
     // Retrieve the menu
-    const menu = await getWeeklyVillageMenuString()
+    const weeksMenuStrings = await getWeeklyCollectedMenuStrings()
 
-    // Post it to Discord
-    await channel.send(menu)
+    // Post each restaurant's menu as separate messages
+    for (const menuString of weeksMenuStrings) {
+      await channel.send(menuString)
+    }
   } catch (error) {
     console.error('Error posting menu to Discord:', error)
   }
 }
+

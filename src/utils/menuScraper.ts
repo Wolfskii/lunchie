@@ -4,6 +4,99 @@ import cheerio from 'cheerio'
 
 const swedishWorkDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
 
+interface Restaurant {
+  name: string
+  scrapeMenu: () => Promise<any>
+}
+
+const restaurants: Restaurant[] = [
+  { name: 'The Village', scrapeMenu: scrapeVillageMenu },
+  { name: 'Vällagat', scrapeMenu: scrapeVallagatMenu }
+  // Add more restaurants here
+]
+
+export async function getTodaysCollectedMenuString(): Promise<string> {
+  const today = moment().locale('sv-SE').format('dddd').toLowerCase()
+  let message = ''
+
+  for (const restaurant of restaurants) {
+    const menu = await restaurant.scrapeMenu()
+    const todaysMenu = menu.days.find((day: any) => day.name.toLowerCase() === today)
+
+    message += `**${restaurant.name}** (${today.charAt(0).toUpperCase() + today.slice(1)}):\n`
+
+    if (todaysMenu) {
+      if (todaysMenu.choices.length > 0) {
+        todaysMenu.choices.forEach((choice: string) => {
+          message += `- ${choice}\n`
+        })
+      } else {
+        message += '- Ingen meny tillgänglig\n'
+      }
+    } else {
+      message += `- Idag är det ${today} och det finns därför ingen meny tillgänglig. Trevlig helg!\n`
+    }
+
+    message += '\n'
+  }
+
+  return message
+}
+
+export async function getTomorrowsCollectedMenuString(): Promise<string> {
+  const tomorrowDate = moment().add(1, 'days')
+  const tomorrow = tomorrowDate.locale('sv-SE').format('dddd').toLowerCase()
+  let message = ''
+
+  for (const restaurant of restaurants) {
+    const menu = await restaurant.scrapeMenu()
+    const tomorrowsMenu = menu.days.find((day: any) => day.name.toLowerCase() === tomorrow)
+
+    message += `**${restaurant.name}** (${tomorrow.charAt(0).toUpperCase() + tomorrow.slice(1)}):\n`
+
+    if (tomorrowsMenu) {
+      if (tomorrowsMenu.choices.length > 0) {
+        tomorrowsMenu.choices.forEach((choice: string) => {
+          message += `- ${choice}\n`
+        })
+      } else {
+        message += '- Ingen meny tillgänglig\n'
+      }
+    } else {
+      message += `- Imorgon är det ${tomorrow} och det finns därför ingen meny tillgänglig. Trevlig helg!\n`
+    }
+
+    message += '\n'
+  }
+
+  return message
+}
+
+export async function getWeeklyCollectedMenuStrings(): Promise<string[]> {
+  const menuStrings: string[] = []
+
+  for (const restaurant of restaurants) {
+    const menu = await restaurant.scrapeMenu()
+
+    let menuString = `**${restaurant.name} - Vecka ${menu.weekNumber}**:\n`
+
+    menu.days.forEach((day: any) => {
+      menuString += `*${day.name}*\n`
+
+      if (day.choices.length > 0) {
+        menuString += day.choices.join('\n') + '\n'
+      } else {
+        menuString += '-\n'
+      }
+    })
+
+    menuStrings.push(menuString)
+  }
+
+  return menuStrings
+}
+
+
 export async function getTodaysVillageMenu(): Promise<any> {
   // Retrieve the weekly menu
   const menu = await scrapeVillageMenu()
