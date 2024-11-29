@@ -1,6 +1,7 @@
-import moment from 'moment'
 import axios from 'axios'
 import cheerio from 'cheerio'
+import moment from 'moment'
+import * as xml2js from 'xml2js'
 
 const swedishWorkDays = ['Måndag', 'Tisdag', 'Onsdag', 'Torsdag', 'Fredag']
 
@@ -95,7 +96,6 @@ export async function getWeeklyCollectedMenuStrings(): Promise<string[]> {
 
   return menuStrings
 }
-
 
 export async function getTodaysVillageMenu(): Promise<any> {
   // Retrieve the weekly menu
@@ -222,37 +222,29 @@ export async function getWeeklyVillageMenuString(): Promise<string> {
 }
 
 export async function scrapeVillageMenu(): Promise<any> {
-  const response = await axios.get('https://www.compass-group.se/village')
-  const $ = cheerio.load(response.data)
+  const response = await axios.get('https://www.compass-group.se/menuapi/feed/rss/current-week?costNumber=388371&language=sv')
+  const xmlData = response.data
+
+  const parser = new xml2js.Parser()
+  const parsedData = await parser.parseStringPromise(xmlData)
 
   const menu: { weekNumber: string; days: { name: string; choices: string[] }[] } = { weekNumber: '', days: [] }
-  let currentDay: { name: string; choices: string[] } | null = null
 
-  $('.c-article__content').each((index: any, element: any) => {
-    const menuText = $(element).text()
+  const items = parsedData.rss.channel[0].item
+  items.forEach((item: any) => {
+    const dayName = item.title[0].split(',')[0].trim()
+    const description = item.description[0]
+    const $ = cheerio.load(description)
+    const choices: string[] = []
 
-    const menuLines = menuText
-      .split('\n')
-      .map((line) => line.trim())
-      .filter((line) => line !== '')
-
-    for (const line of menuLines) {
-      if (line.startsWith('Lunchmeny vecka')) {
-        menu.weekNumber = line.replace('Lunchmeny vecka', '').trim()
-      } else if (swedishWorkDays.includes(line)) {
-        const dayName = line.trim()
-        currentDay = { name: dayName, choices: [] }
-        menu.days.push(currentDay)
-      } else if (currentDay) {
-        const isClosed = line.toLowerCase().includes('stängt') || line.toLowerCase().includes('stängd')
-        if (isClosed) {
-          currentDay.choices = ['Stängt']
-          currentDay = null // Reset currentDay to prevent further choices from being added
-        } else if (currentDay.choices.length < 3) {
-          currentDay.choices.push(line)
-        }
+    $('p').each((index, element) => {
+      const choice = $(element).text().trim()
+      if (choice) {
+        choices.push(choice)
       }
-    }
+    })
+
+    menu.days.push({ name: dayName, choices })
   })
 
   return menu
@@ -423,6 +415,3 @@ export async function scrapeVallagatMenu(): Promise<any> {
 
   return menu
 }
-
-
-

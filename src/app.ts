@@ -1,7 +1,6 @@
-import express, { Request, Response } from 'express'
-import { scrapeVillageMenu } from './utils/menuScraper'
-import { Client, GatewayIntentBits } from 'discord.js'
 import cors from 'cors'
+import { Client, GatewayIntentBits } from 'discord.js'
+import express from 'express'
 import { DiscordBot } from './discord/bot'
 require('dotenv').config()
 
@@ -17,16 +16,22 @@ app.use(
   })
 )
 
+console.log('Discord token:', process.env.DISCORD_TOKEN)
+
 // Start the Discord bot
 const discordClient = new Client({ intents: [GatewayIntentBits.Guilds] })
-const discordBot = new DiscordBot(discordClient, process.env.DISCORD_TOKEN!)
-discordBot.start()
+
+if (process.env.DISCORD_TOKEN) {
+  const discordBot = new DiscordBot(discordClient, process.env.DISCORD_TOKEN!)
+  discordBot.start()
+} else {
+  console.error('No Discord token provided')
+}
 
 // Routes import
 import routes from './routes/index'
 app.use('/', routes(discordClient))
 
 app.listen(port, () => {
-  console.clear()
   console.log(`Server is running on http://localhost:${port}`)
 })

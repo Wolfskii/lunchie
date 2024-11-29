@@ -9,7 +9,7 @@
     "url": "https://github.com/Wolfskii/lunch-scraper.git"
   },
   "scripts": {
-    "start": "nodemon --quiet --exec ts-node src/app.ts",
+    "start": "nodemon --quiet --exec tsx src/app.ts",
     "build": "node -e \"require('fs').mkdirSync('build', { recursive: true }); require('fs').copyFileSync('package.json', 'build/package.json')\" && tsc"
   },
   "keywords": [
@@ -32,19 +32,21 @@
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "discord-api-types": "^0.37.47",
-    "discord.js": "^14.11.0",
+    "discord.js": "^14.16.3",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "moment": "^2.29.4",
-    "node-cron": "^3.0.2"
+    "node-cron": "^3.0.2",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.14",
     "@types/express": "^4.17.17",
-    "@types/node": "^20.4.1",
+    "@types/node": "^20.17.9",
     "@types/node-cron": "^3.0.8",
-    "nodemon": "^2.0.12",
-    "ts-node": "^10.4.0",
+    "@types/xml2js": "^0.4.14",
+    "nodemon": "^3.1.7",
+    "tsx": "^4.19.2",
     "typescript": "^4.9.4"
   }
 }
